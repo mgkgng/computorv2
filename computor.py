@@ -33,6 +33,10 @@ class Computor:
         op_type = self.get_op_type(exps[1])
         if op_type == OP.COMPUTE_VAL or op_type == OP.COMPUTE_SOL:
             exps[1] = exps[1][:-1]
-        # TO CONTINUE        
-
+        
+        if op_type == OP.ASSIGN:
+            if not exps[0].isalpha():
+                return OP.ERROR
+            var_name = exps[0].lower()
+        
         
