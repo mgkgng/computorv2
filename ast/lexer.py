@@ -36,6 +36,7 @@ class Lexer:
             elif c == '?':
                 tokens.append(Token(c, TokenType.SOLUTION, c))
                 self.pos += 1
+        return tokens
 
     @staticmethod
     def get_num_str(str):
