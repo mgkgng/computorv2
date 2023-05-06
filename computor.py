@@ -38,5 +38,7 @@ class Computor:
             if not exps[0].isalpha():
                 return OP.ERROR
             var_name = exps[0].lower()
+
+            
         
         
