@@ -11,7 +11,6 @@ class TokenType(Enum):
     MATRIX = auto()
     SOLUTION = auto()
     EQUAL = auto()
-    pass
 
 class Token:
     def __init__(self, type, value):
