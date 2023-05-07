@@ -8,9 +8,7 @@ class Parser:
         self.ast = None
     
     def peek(self):
-        if self.position < len(self.tokens):
-            return self.tokens[self.position]
-        return None
+        return self.tokens[self.position] if self.position < len(self.tokens) else None
 
     def consume(self):
         if self.position < len(self.tokens):
@@ -55,11 +53,13 @@ class Parser:
             self.consume()
             return Variable(token.value)
 
-        if token.type == TokenType.PAREN_LEFT:
+        if token.type == TokenType.PAREN_L:
             self.consume()
             expression = self.parse_expression()
-            self.expect(TokenType.PAREN_RIGHT)
+            self.expect(TokenType.PAREN_R)
             return expression
 
         raise ValueError(f"Unexpected token at position {self.pos}: {token.type}")
 
+    def parse(self):
+        pass

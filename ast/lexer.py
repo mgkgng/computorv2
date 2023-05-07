@@ -11,21 +11,22 @@ class Lexer:
         while self.pos < len(self.str):
             c = self.str[self.pos]
 
-            # TODO sign handling
             if c in '+*-/^':
                 tokens.append(Token(c, TokenType.OPERATOR, c))      
                 self.pos += 1
             elif c in '()':
-                tokens.append(Token(c, TokenType.LEFT_PAREN if c == '(' else TokenType.RIGHT_PAREN, c))
+                tokens.append(Token(c, TokenType.PAREN_L if c == '(' else TokenType.PAREN_R, c))
                 self.pos += 1
-            elif c.isdigit(): # TODO: imaginary numbers
+            elif c.isdigit():
                 num = self.get_num_str(self.str[self.pos:])
                 tokens.append(Token(c, TokenType.NUMBER, num))
                 self.pos += len(num)
             elif c.isalpha():
-                name, check_res = self.get_var_or_func_str(self.str[self.pos:])
-                if check_res == 0:
+                name, token_type = self.get_var_or_func_str(self.str[self.pos:])
+                if token_type == TokenType.VARIABLE:
                     tokens.append(Token(c, TokenType.VARIABLE, name.lower()))
+                elif token_type == TokenType.IMAGINARY_UNIT:
+                    tokens.append(Token(c, TokenType.IMAGINARY_UNIT, name.lower()))
                 else:
                     tokens.append(Token(c, TokenType.FUNCTION, name.lower()))
                 self.pos += len(name)
@@ -36,6 +37,11 @@ class Lexer:
             elif c == '?':
                 tokens.append(Token(c, TokenType.SOLUTION, c))
                 self.pos += 1
+            elif c == '=':
+                tokens.append(Token(c, TokenType.EQUAL, c))
+                self.pos += 1
+            else:
+                raise Exception("Invalid character")
         return tokens
 
     @staticmethod
@@ -59,9 +65,9 @@ class Lexer:
         var_pattern = re.compile(r'^[a-zA-Z]+$')
         func_pattern = re.compile(r'^[a-zA-Z]+\([a-zA-Z]+\)$')
         if var_pattern.match(str[:i]):
-            return str[:i], 0
+            return str[:i], TokenType.VARIABLE if str[:i] != 'i' else TokenType.IMAGINARY_UNIT
         elif func_pattern.match(str[:i]):
-            return str[:i], 1
+            return str[:i], TokenType.FUNCTION
         raise Exception("Invalid variable or function")
 
     @staticmethod

@@ -5,10 +5,12 @@ class TokenType(Enum):
     OPERATOR = auto()
     VARIABLE = auto()
     FUNCTION = auto()
-    LEFT_PAREN = auto()
-    RIGHT_PAREN = auto()
+    IMAGINARY_UNIT = auto()
+    PAREN_L = auto()
+    PAREN_R = auto()
     MATRIX = auto()
     SOLUTION = auto()
+    EQUAL = auto()
     pass
 
 class Token:
