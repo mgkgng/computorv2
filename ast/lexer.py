@@ -54,21 +54,14 @@ class Lexer:
     @staticmethod
     def get_var_or_func_str(str):
         i = 0
-        while i < len(str) and (str[i].isalpha() or str[i] == '('):
-            if str[i] == '(':
-                open = 1
-                while i < len(str) and open > 0:
-                    open += 1 if str[i] == '(' else -1 if str[i] == ')' else 0
-                    i += 1
-            else:
-                i += 1
-        var_pattern = re.compile(r'^[a-zA-Z]+$')
-        func_pattern = re.compile(r'^[a-zA-Z]+\([a-zA-Z]+\)$')
-        if var_pattern.match(str[:i]):
-            return str[:i], TokenType.VARIABLE if str[:i] != 'i' else TokenType.IMAGINARY_UNIT
-        elif func_pattern.match(str[:i]):
-            return str[:i], TokenType.FUNCTION
-        raise Exception("Invalid variable or function")
+        while i < len(str) and str[i].isalpha():
+            i += 1
+        token_type = TokenType.FUNCTION if i < len(str) and str[i] == '(' else TokenType.VARIABLE
+        if token_type == TokenType.VARIABLE and str[:i].lower() == 'i':
+            token_type = TokenType.IMAGINARY_UNIT
+        elif token_type == TokenType.FUNCTION and str[:i].lower() == 'i':
+            raise Exception("Invalid function name")
+        return str[:i], token_type
 
     @staticmethod
     def get_mat_str(str):
