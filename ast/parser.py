@@ -15,6 +15,11 @@ class Parser:
         if self.position < len(self.tokens):
             self.position += 1
 
+    def peek_and_consume(self):
+        token = self.peek()
+        self.consume()
+        return token
+
     def expect(self, token_type):
         token = self.peek()
         if token is None or token.type != token_type:
@@ -24,7 +29,13 @@ class Parser:
     def reject(self, token_type):
         token = self.peek()
         if token is None or token.type == token_type:
-            raise ValueError(f"Expected token not of type {token_type}, but got {token.type if token else None}")
+            raise ValueError(f"Expected token not of type {token_type}, but got {token.type if token else None}") #TODO
+        self.consume()
+
+    def rejects(self, token_types):
+        token = self.peek()
+        if token is None or token.type in token_types:
+            raise ValueError(f"Expected token not of type {token.type}, but got {token.type if token else None}") # TODO
         self.consume()
 
     def parse(self):
@@ -48,29 +59,31 @@ class Parser:
             left = BinaryOperation(left, operator_token.value, right)
 
     def parse_term(self):
-        left_factor = self.parse_factor()
+        left_factor = self.parse_exponent()
 
         while self.peek() is not None and self.peek().type == TokenType.OPERATOR and self.peek().value in '*/^':
-            pass
-
-            # op_token = self.consume()
-            # right_factor = self.parse_factor()
-
-            # if op_token.value == '*':
-            #     left_factor = BinaryOperator('*', left_factor, right_factor)
-            # elif op_token.value == '/':
-            #     left_factor = BinaryOperator('/', left_factor, right_factor)
-
+            op = self.peek_and_consume()
+            right_factor = self.parse_exponent()
+            left_factor = BinaryOperation(left_factor, op.value, right_factor)
         return left_factor
+
+    def parse_exponent(self):
+        base = self.parse_factor()
+        if self.peek() is not None and self.peek().type == TokenType.OPERATOR and self.peek().value == '^':
+            self.consume()
+            self.rejects([TokenType.OPERATOR, TokenType.FUNCTION, TokenType.MATRIX])
+            exponent = self.parse_factor()
+            return BinaryOperation(base, '^', exponent)
+        return base
 
     def parse_factor(self):
         token = self.peek()
 
         if token.type == TokenType.OPERATOR and token.value in '+-':
-            op = token.value
+            self.consume()
             self.reject(TokenType.OPERATOR)
             factor = self.parse_factor()
-            return UnaryOperation(op, factor)
+            return UnaryOperation(token.value, factor)
 
         elif token.type == TokenType.NUMBER:
             self.consume()
@@ -88,23 +101,14 @@ class Parser:
 
         elif token.type == TokenType.FUNCTION:
             self.consume()
-            token = self.peek()
-            if token is None or token.type != TokenType.OPEN_PAREN:
-                raise ValueError("Expected opening parenthesis")
-
-            self.consume()
+            self.expect(TokenType.OPEN_PAREN)
             expression = self.parse_expression()
-
-            token = self.peek()
-            if token is None or token.type != TokenType.CLOSE_PAREN:
-                raise ValueError("Expected closing parenthesis")
-
-            self.consume()
+            self.expect(TokenType.CLOSE_PAREN)
             return Function(token.value, expression)
         
         elif token.type == TokenType.MATRIX:
             self.consume()
-            return Matrix(token.value, expression)9
+            return Matrix(token.value, expression)
 
         else:
             raise ValueError(f"Unexpected token: {token}")

@@ -25,6 +25,3 @@ test_cases = [
     "titi(D)",
     "whataboutthis(blaba)"
 ]
-
-for test_case in test_cases:
-    print(f"{test_case}: {check(test_case)}")
