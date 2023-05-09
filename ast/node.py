@@ -39,4 +39,17 @@ class Parenthesis(Expression):
 
 class Matrix(Expression):
     def __init__(self, rows):
+        if len(rows) == 0:
+            raise Exception("Empty matrix")
+        elem_count = len(rows[0].elem)
+        for row in rows:
+            if len(row.elem) != elem_count:
+                raise Exception("Invalid matrix")
         self.rows = rows
+        self.shape = (len(rows), elem_count)
+
+class MatrixRow(Expression):
+    def __init__(self, elems):
+        if len(elems) == 0:
+            raise Exception("Empty matrix row")
+        self.elems = elems

@@ -8,9 +8,12 @@ class TokenType(Enum):
     IMAGINARY_UNIT = auto()
     PAREN_L = auto()
     PAREN_R = auto()
-    MATRIX = auto()
     SOLUTION = auto()
     EQUAL = auto()
+    MATRIX_OPEN = auto()
+    MATRIX_CLOSE = auto()
+    MATRIX_ELEM_DELIM = auto()
+    MATRIX_ROW_DELIM = auto()
 
 class Token:
     def __init__(self, type, value):

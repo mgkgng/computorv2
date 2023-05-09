@@ -11,6 +11,14 @@ def check(str):
     else:
         return "Invalid"
 
+def is_valid_num(str):
+    try:
+        float(str)
+        return True
+    except ValueError:
+        return False
+
+
 # Test cases
 test_cases = [
     "toto",
@@ -25,3 +33,5 @@ test_cases = [
     "titi(D)",
     "whataboutthis(blaba)"
 ]
+
+print(is_valid_num('.22123.'))

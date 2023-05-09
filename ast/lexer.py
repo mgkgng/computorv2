@@ -30,10 +30,15 @@ class Lexer:
                 else:
                     tokens.append(Token(c, TokenType.FUNCTION, name.lower()))
                 self.pos += len(name)
-            elif c == '[':
-                mat = self.get_mat_str(self.str[self.pos:])
-                tokens.append(Token(c, TokenType.MATRIX, mat))
-                self.pos += len(mat)
+            elif c == '[]':
+                tokens.append(Token(c, TokenType.MATRIX_OPEN if c == '[' else TokenType.MATRIX_CLOSE, c))
+                self.pos += 1
+            elif c == ',':
+                tokens.append(Token(c, TokenType.MATRIX_ELEM_DELIM, c))
+                self.pos += 1
+            elif c == ';':
+                tokens.append(Token(c, TokenType.MATRIX_ROW_DELIM, c))
+                self.pos += 1
             elif c == '?':
                 tokens.append(Token(c, TokenType.SOLUTION, c))
                 self.pos += 1

@@ -1,4 +1,4 @@
-from node import Number, BinaryOperation, UnaryOperation, Function, Variable, Matrix, Parenthesis, Equation, Expression
+from node import Number, BinaryOperation, UnaryOperation, Function, Variable, Matrix, Equation, MatrixRow
 from token import TokenType
 from ast import AST, AST_TYPE
 
@@ -106,8 +106,25 @@ class Parser:
             self.expect(TokenType.CLOSE_PAREN)
             return Function(token.value, expression)
         
-        elif token.type == TokenType.MATRIX:
+        elif token.type == TokenType.MATRIX_OPEN:
             self.consume()
+
+            vec = []
+            vec.append(self.parse_expression())
+
+            if self.peek() is not None and self.peek().type == TokenType.MATRIX_ELEM_DELIM:
+                delim = TokenType.MATRIX_ELEM_DELIM
+            elif self.peek() is not None and self.peek().type == TokenType.MATRIX_ROW_DELIM:
+                delim = TokenType.MATRIX_ROW_DELIM
+
+            while self.peek() is not None and self.peek().type == delim:
+                self.consume()
+                vec.append(self.parse_expression())
+
+            self.expect(TokenType.MATRIX_CLOSE)
+
+            if delim == TokenType.MATRIX_ELEM_DELIM:
+                return MatrixRow(vec)
             return Matrix(token.value, expression)
 
         else:
