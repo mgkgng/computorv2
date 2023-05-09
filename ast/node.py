@@ -9,13 +9,13 @@ class Equation(Node):
 class Expression(Node):
     pass
 
-class BinaryOperation(Expression):
+class BinaryOperator(Expression):
     def __init__(self, left, op, right):
         self.left = left
         self.op = op
         self.right = right
 
-class UnaryOperation(Expression):
+class UnaryOperator(Expression):
     def __init__(self, op, operand):
         self.op = op
         self.operand = operand

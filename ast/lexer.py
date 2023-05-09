@@ -1,5 +1,4 @@
 from token import Token, TokenType
-import re
 
 class Lexer:
     def __init__(self, str):

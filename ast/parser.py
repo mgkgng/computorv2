@@ -1,4 +1,4 @@
-from node import Number, BinaryOperation, UnaryOperation, Function, Variable, Matrix, Equation, MatrixRow
+from node import Number, BinaryOperator, UnaryOperator, Function, Variable, Matrix, Equation, MatrixRow
 from token import TokenType
 from ast import AST, AST_TYPE
 
@@ -61,7 +61,7 @@ class Parser:
             operator_token = self.peek()
             self.consume()
             right = self.parse_term()
-            left = BinaryOperation(left, operator_token.value, right)
+            left = BinaryOperator(left, operator_token.value, right)
         return left
 
     def parse_term(self):
@@ -70,7 +70,7 @@ class Parser:
         while self.peek() is not None and self.peek().type == TokenType.OPERATOR and self.peek().value in '*/^':
             op = self.peek_and_consume()
             right_factor = self.parse_exponent()
-            left_factor = BinaryOperation(left_factor, op.value, right_factor)
+            left_factor = BinaryOperator(left_factor, op.value, right_factor)
         return left_factor
 
     def parse_exponent(self):
@@ -79,7 +79,7 @@ class Parser:
             self.consume()
             self.rejects([TokenType.OPERATOR, TokenType.FUNCTION, TokenType.MATRIX])
             exponent = self.parse_factor()
-            return BinaryOperation(base, '^', exponent)
+            return BinaryOperator(base, '^', exponent)
         return base
 
     def parse_factor(self):
@@ -89,7 +89,7 @@ class Parser:
             self.consume()
             self.reject(TokenType.OPERATOR)
             factor = self.parse_factor()
-            return UnaryOperation(token.value, factor)
+            return UnaryOperator(token.value, factor)
 
         elif token.type == TokenType.NUMBER:
             self.consume()
