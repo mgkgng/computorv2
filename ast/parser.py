@@ -7,6 +7,11 @@ class Parser:
         self.tokens = tokens
         self.pos = 0
         self.ast = None
+        if tokens[:-1] == TokenType.SOLLUTION:
+            self.ast_type = AST_TYPE.COMPUTE_SOL if tokens[-2].type == TokenType.EQUAL else AST_TYPE.COMPUTE_VAL
+            tokens = tokens[:-1]
+        else:
+            self.ast_type = AST_TYPE.ASSIGN
     
     def peek(self):
         return self.tokens[self.position] if self.position < len(self.tokens) else None
@@ -40,15 +45,15 @@ class Parser:
 
     def parse(self):
         self.validate_lexer_tokens()
-        equation, input_type = self.parse_equation()
-        self.ast = AST(equation, input_type)
+        equation = self.parse_equation()
+        self.ast = AST(equation, self.ast_type)
         return self.ast
 
     def parse_equation(self):
-        left, _ = self.parse_expression()
+        left = self.parse_expression()
         self.expect(TokenType.EQUAL)
-        right, input_type = self.parse_expression()
-        return Equation(left, right), input_type
+        right = self.parse_expression()
+        return Equation(left, right)
 
     def parse_expression(self):
         left = self.parse_term()
@@ -57,6 +62,7 @@ class Parser:
             self.consume()
             right = self.parse_term()
             left = BinaryOperation(left, operator_token.value, right)
+        return left
 
     def parse_term(self):
         left_factor = self.parse_exponent()
