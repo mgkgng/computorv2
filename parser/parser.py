@@ -1,6 +1,6 @@
-from node import Number, BinaryOperator, UnaryOperator, Function, Variable, Matrix, Equation, MatrixRow
+from node import Number, BinaryOperator, UnaryOperator, Function, Variable, MatrixNode, Equation, MatrixRow
 from token import TokenType
-from ast import AST, AST_TYPE
+from ast import ASTWrapper, AST_TYPE
 
 class Parser:
     def __init__(self, tokens):
@@ -46,7 +46,7 @@ class Parser:
     def parse(self):
         self.validate_lexer_tokens()
         equation = self.parse_equation()
-        self.ast = AST(equation, self.ast_type)
+        self.ast = ASTWrapper(equation, self.ast_type)
         return self.ast
 
     def parse_equation(self):
@@ -67,7 +67,7 @@ class Parser:
     def parse_term(self):
         left_factor = self.parse_exponent()
 
-        while self.peek() is not None and self.peek().type == TokenType.OPERATOR and self.peek().value in '*/^':
+        while self.peek() is not None and self.peek().type == TokenType.OPERATOR and self.peek().value in ['*', '/', '^', '%', '**']:
             op = self.peek_and_consume()
             right_factor = self.parse_exponent()
             left_factor = BinaryOperator(left_factor, op.value, right_factor)
@@ -131,7 +131,7 @@ class Parser:
 
             if delim == TokenType.MATRIX_ELEM_DELIM:
                 return MatrixRow(vec)
-            return Matrix(token.value, expression)
+            return MatrixNode(token.value, expression)
 
         else:
             raise ValueError(f"Unexpected token: {token}")

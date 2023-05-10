@@ -39,6 +39,12 @@ class Computor:
                 return OP.ERROR
             var_name = exps[0].lower()
 
+    def assign(self, left, right):
+        pass
+    
+    def compute(self, left, right):
+        pass
+
             
         
         

@@ -1,3 +1,10 @@
 New notions
 
 Recursive descent parser (top-down parsing technique)
+
+One of the biggest challenge of the project:
+- the transition from syntax to semantics, from the parser to the interpreter.
+
+the precedence and associativity rules of the language:
+- the precedence of the operators
+- the associativity of the operators

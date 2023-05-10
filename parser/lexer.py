@@ -10,9 +10,13 @@ class Lexer:
         while self.pos < len(self.str):
             c = self.str[self.pos]
 
-            if c in '+*-/^':
-                tokens.append(Token(c, TokenType.OPERATOR, c))      
-                self.pos += 1
+            if c in '+*-/^%':
+                if len(self.str[self.pos:]) > 2 and self.str[self.pos:self.pos + 2] == '**':
+                    tokens.append(Token('**', TokenType.OPERATOR, '**'))
+                    self.pos += 2
+                else:
+                    tokens.append(Token(c, TokenType.OPERATOR, c))
+                    self.pos += 1
             elif c in '()':
                 tokens.append(Token(c, TokenType.PAREN_L if c == '(' else TokenType.PAREN_R, c))
                 self.pos += 1

@@ -33,11 +33,7 @@ class Number(Expression):
     def __init__(self, value):
         self.value = value
 
-class Parenthesis(Expression):
-    def __init__(self, exp):
-        self.exp = exp
-
-class Matrix(Expression):
+class MatrixNode(Expression):
     def __init__(self, rows):
         if len(rows) == 0:
             raise Exception("Empty matrix")
