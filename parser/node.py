@@ -20,12 +20,12 @@ class UnaryOperator(Expression):
         self.op = op
         self.operand = operand
 
-class Function(Expression):
+class FunctionNode(Expression):
     def __init__(self, name, args):
         self.name = name
         self.args = args
 
-class Variable(Expression):
+class VariableNode(Expression):
     def __init__(self, name):
         self.name = name
 

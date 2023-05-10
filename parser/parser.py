@@ -1,4 +1,4 @@
-from node import Number, BinaryOperator, UnaryOperator, Function, Variable, MatrixNode, Equation, MatrixRow
+from node import Number, BinaryOperator, UnaryOperator, FunctionNode, VariableNode, MatrixNode, Equation, MatrixRow
 from token import TokenType
 from ast import ASTWrapper, AST_TYPE
 
@@ -97,7 +97,7 @@ class Parser:
 
         elif token.type == TokenType.VARIABLE:
             self.consume()
-            return Variable(token.value)
+            return VariableNode(token.value)
 
         elif token.type == TokenType.OPEN_PAREN:
             self.consume()
@@ -110,7 +110,7 @@ class Parser:
             self.expect(TokenType.OPEN_PAREN)
             expression = self.parse_expression()
             self.expect(TokenType.CLOSE_PAREN)
-            return Function(token.value, expression)
+            return FunctionNode(token.value, expression)
         
         elif token.type == TokenType.MATRIX_OPEN:
             self.consume()

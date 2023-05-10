@@ -1,5 +1,5 @@
 class Polynomial:
-    def __init__(self, coefficients):
+    def __init__(self, coefficients, variable):
         if not coefficients or not isinstance(coefficients, list):
             raise ValueError("Polynomial coefficients should be a list")
         

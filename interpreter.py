@@ -1,6 +1,6 @@
-from ast import Number, BinaryOperator, UnaryOperator, Variable, Function, MatrixNode, Equation
+from ast import Number, BinaryOperator, UnaryOperator, VariableNode, FunctionNode, MatrixNode, Equation
 from ast import AST_TYPE
-from types import Complex, Rational, Matrix, Polynomial
+from types import Complex, Rational, Matrix, Polynomial, Function
 from fractions import Fraction
 
 class Interpreter:
@@ -15,7 +15,9 @@ class Interpreter:
             return self.visit_unary_operator(node)
         elif isinstance(node, BinaryOperator):
             return self.visit_binary_operator(node)
-        elif isinstance(node, Function):
+        elif isinstance(node, VariableNode):
+            return self.visit_variable(node)
+        elif isinstance(node, FunctionNode):
             return self.visit_function(node)
         elif isinstance(node, MatrixNode):
             return self.visit_matrix(node)
@@ -66,17 +68,22 @@ class Interpreter:
     def visit_imaginary(self, node):
         return Complex(0, 1)
 
+    def visit_variable(self, node):
+        return Polynomial([0, 1], node.name)
+
     def visit_function(self, node):
-        pass
+        arg = self.visit(node.arg)
+        return Function(node.name, arg)
 
     def visit_matrix(self, node):
-        # Handle Matrix nodes
-        pass
+        rows = []
+        for row in node.rows:
+            rows.append([self.visit(element) for element in row])
+        return Matrix(rows)
 
     def visit_equation(self, node):
         left = self.visit(node.left)
-        if self.ast_type == AST_TYPE.ASSIGN and not isinstance(left, Variable) and not isinstance(left, Function): # TODO function declaration
+        if self.ast_type == AST_TYPE.ASSIGN and not isinstance(left, VariableNode) and not isinstance(left, FunctionNode): # TODO function declaration
             raise ValueError("The left side of the equation must declare a variable or function when it is an assignment")
         right = self.visit(node.right)
-        
         return left, right
