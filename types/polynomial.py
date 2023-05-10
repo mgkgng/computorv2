@@ -8,13 +8,13 @@ class Polynomial:
             coefficients.pop(0)
 
         self.coefficients = coefficients
+        self.variable = variable
 
     def __pos__(self):
         return self
 
     def __neg__(self):
-        pass
-
+        return Polynomial([-coef for coef in self.coefficients], self.variable)
 
     def __str__(self):
         if len(self.coefficients) == 1 and self.coefficients[0] == 0:
