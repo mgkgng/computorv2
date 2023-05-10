@@ -12,6 +12,12 @@ class Matrix:
         self.num_rows = len(elements)
         self.num_cols = row_length
 
+    def __pos__(self):
+        return self
+
+    def __neg__(self):
+        pass
+
     def __str__(self):
         return "\n".join([" ".join(map(str, row)) for row in self.elements])
 
@@ -53,3 +59,6 @@ class Matrix:
     def identity(n):
         elements = [[1 if i == j else 0 for j in range(n)] for i in range(n)]
         return Matrix(elements)
+
+    def __eq__(self, other):
+        pass

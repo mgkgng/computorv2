@@ -1,4 +1,6 @@
 import re
+from fractions import Fraction
+
 
 def check(str):
     variable_pattern = re.compile(r'^[a-zA-Z]+$')
@@ -34,4 +36,4 @@ test_cases = [
     "whataboutthis(blaba)"
 ]
 
-print(is_valid_num('.22123.'))
+print(Fraction(0.2142312).denominator)

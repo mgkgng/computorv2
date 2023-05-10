@@ -3,6 +3,12 @@ class Complex:
         self.real = real
         self.imaginary = imaginary
 
+    def __pos__(self):
+        return self
+
+    def __neg__(self):
+        return Complex(-self.real, -self.imaginary)
+
     def __add__(self, other):
         if isinstance(other, Complex):
             return Complex(self.real + other.real, self.imaginary + other.imaginary)
@@ -40,3 +46,6 @@ class Complex:
             return f"{self.real} + {self.imaginary}i"
         else:
             return f"{self.real} - {-self.imaginary}i"
+
+    def __eq__(self, other):
+        pass

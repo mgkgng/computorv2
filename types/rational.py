@@ -9,6 +9,12 @@ class Rational:
         self.numerator = numerator // common_divisor
         self.denominator = denominator // common_divisor
 
+    def __pos__(self):
+        return self
+
+    def __neg__(self):
+        pass
+
     def __add__(self, other):
         if isinstance(other, Rational):
             numerator = self.numerator * other.denominator + other.numerator * self.denominator
@@ -57,3 +63,6 @@ class Rational:
 
     def to_float(self):
         return float(self.numerator) / float(self.denominator)
+
+    def __eq__(self, other):
+        pass

@@ -9,6 +9,13 @@ class Polynomial:
 
         self.coefficients = coefficients
 
+    def __pos__(self):
+        return self
+
+    def __neg__(self):
+        pass
+
+
     def __str__(self):
         if len(self.coefficients) == 1 and self.coefficients[0] == 0:
             return "0"

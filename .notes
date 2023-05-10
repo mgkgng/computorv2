@@ -8,3 +8,5 @@ One of the biggest challenge of the project:
 the precedence and associativity rules of the language:
 - the precedence of the operators
 - the associativity of the operators
+
+dunder methods (double underscore methods) or magic methods
