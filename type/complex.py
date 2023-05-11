@@ -1,8 +1,3 @@
-from rational import Rational
-from polynomial import Polynomial
-from matrix import Matrix
-from function import Function
-
 class Complex:
     def __init__(self, real, imaginary):
         self.real = real

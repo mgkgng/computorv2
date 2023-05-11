@@ -1,5 +1,3 @@
-from token import Token, TokenType
-
 class Lexer:
     def __init__(self, str):
         self.str = str.replace(' ', '')

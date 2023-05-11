@@ -1,9 +1,3 @@
-import math
-from complex import Complex
-from polynomial import Polynomial
-from matrix import Matrix
-from function import Function
-
 class Rational:
     def __init__(self, numerator, denominator=1):
         if denominator == 0:

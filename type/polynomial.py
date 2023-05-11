@@ -1,6 +1,3 @@
-from rational import Rational
-from function import Function
-
 class Polynomial:
     def __init__(self, coeffs, variable=None):
         if not coeffs or not isinstance(coeffs, list) or len():

@@ -1,6 +1,6 @@
-from ast import Number, BinaryOperator, UnaryOperator, VariableNode, FunctionNode, MatrixNode, Equation
-from ast import AST_TYPE
-from types import Complex, Rational, Matrix, Polynomial, Function
+from parser import AST_TYPE
+from parser.node import Number, BinaryOperator, UnaryOperator, FunctionNode, VariableNode, MatrixNode, Equation, MatrixRow
+from type import Complex, Rational, Matrix, Polynomial, Function
 from fractions import Fraction
 
 class Interpreter:
@@ -51,7 +51,7 @@ class Interpreter:
                 raise TypeError("Cannot divide by a matrix")
             return left / right
         elif node.op == '^':
-            if isinstance(right, Matrix) or isinstance(right, Function) or isinstance(right, Variable): #TODO maybe with variable it could be ok
+            if isinstance(right, Matrix) or isinstance(right, Function) or isinstance(right, Polynomial):
                 raise TypeError("Cannot exponentiate a matrix, a function or a variable")
             return left ** right
         elif node.op == '%':

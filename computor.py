@@ -1,4 +1,4 @@
-from types import Complex, Rational, Matrix, Polynomial, Function
+from type import Polynomial, Rational, Complex, Matrix, Function
 import numpy as np
 
 class Computor:
