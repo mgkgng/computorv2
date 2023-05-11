@@ -12,7 +12,9 @@ class Computor:
             self.vars[left.variable] = right
         elif isinstance(left, Function):
             if isinstance(right, Function):
-                raise TypeError("Cannot assign a function to another function"
+                raise TypeError("Cannot assign a function to another function")
+            if isinstance(right, Polynomial) and right.variable != left.arg:
+                raise TypeError("Cannot assign a polynomial to a function with a different variable")
             self.funcs[left.name] = right
         else:
             raise ValueError(f"Unexpected node type: {type(left)}")
