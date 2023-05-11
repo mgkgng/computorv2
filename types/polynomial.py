@@ -2,13 +2,14 @@ from rational import Rational
 from function import Function
 
 class Polynomial:
-    def __init__(self, coeffs, variable):
+    def __init__(self, coeffs, variable=None):
         if not coeffs or not isinstance(coeffs, list) or len():
             raise ValueError("Polynomial coefficients should be a non-empty list")
         
         # coefficients index: 0 -> x^0, 1 -> x^1, 2 -> x^2, ...
         self.coeffs = coeffs
         self.variable = variable
+        self.degree = len(coeffs) - 1
 
     def __pos__(self):
         return self
@@ -60,7 +61,7 @@ class Polynomial:
         elif isinstance(other, Function):
             raise TypeError("Cannot add a polynomial to a function")
         else:
-            return self + Polynomial([other], self.variable)
+            return self + Polynomial([other])
 
     def __sub__(self, other):
         return self + (-other)
@@ -69,10 +70,10 @@ class Polynomial:
         if isinstance(other, Polynomial):
             if self.variable != other.variable:
                 # if variables are different, treat them as constants
-                coeffs1 = self.coeffs
-                for i in range(len(coeffs1)):
-                    coeffs1[i] *= other
-                return Polynomial(coeffs1, self.variable)
+                coeffs = self.coeffs
+                for i in range(len(coeffs)):
+                    coeffs[i] *= other
+                return Polynomial(coeffs, self.variable)
             deg = len(self.coeffs) + len(other.coeffs) - 1
             res = [0] * deg
             for i, coef1 in enumerate(self.coeffs):
@@ -82,14 +83,11 @@ class Polynomial:
         elif isinstance(other, Function):
             raise TypeError("Cannot multiply a polynomial by a function")
         else:
-            return self * Polynomial([other], self.variable)
+            return self * Polynomial([other])
 
     def __call__(self, x):
         return sum([coef * x ** i for i, coef in enumerate(self.coeffs)])
     
-    def degree(self):
-        return len(self.coeffs) - 1
-
     def __pow__(self, power):
         if not isinstance(power, int):
             raise TypeError("Power should be an integer")
@@ -108,3 +106,19 @@ class Polynomial:
 
     def modify_var(self, new_var):
         self.variable = new_var
+
+    def substitute(self, vars):
+        for i in range(len(self.coeffs)):
+            if isinstance(self.coeffs[i], Polynomial):
+                self.coeffs[i] = self.coeffs[i].substitute(vars)
+        
+        if self.variable in vars:
+            res = self.coeffs[0] + sum([self.coeffs[i] * vars[self.variable] ** i for i in range(1, len(self.coeffs))])
+            if isinstance(res, Polynomial):
+                return res.substitute(vars)
+            return res
+
+        for i in range(len(self.coeffs)):
+            if isinstance(self.coeffs[i], Polynomial) and not self.coeffs[i] in vars:
+                raise ValueError("Polynomial with multiple variables cannot be evaluated")
+        return self
