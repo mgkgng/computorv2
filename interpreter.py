@@ -1,5 +1,5 @@
 from parser import AST_TYPE
-from parser.node import Number, BinaryOperator, UnaryOperator, FunctionNode, VariableNode, MatrixNode, Equation, MatrixRow
+from parser import Number, BinaryOperator, UnaryOperator, FunctionNode, VariableNode, MatrixNode, Equation, MatrixRow
 from type import Complex, Rational, Matrix, Polynomial, Function
 from fractions import Fraction
 

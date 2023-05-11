@@ -1,20 +1,25 @@
+from .token import TokenType
+from .ast import ASTWrapper, AST_TYPE
+from .node import Equation, BinaryOperator, Number, VariableNode, MatrixNode, FunctionNode, UnaryOperator, MatrixRow
+
 class Parser:
-    def __init__(self, tokens):
+    def run(self, tokens):
         self.tokens = tokens
         self.pos = 0
         self.ast = None
-        if tokens[:-1] == TokenType.SOLLUTION:
+        if tokens[:-1] == TokenType.SOLUTION:
             self.ast_type = AST_TYPE.COMPUTE_SOL if tokens[-2].type == TokenType.EQUAL else AST_TYPE.COMPUTE_VAL
             tokens = tokens[:-1]
         else:
             self.ast_type = AST_TYPE.ASSIGN
-    
+        return self.parse()
+
     def peek(self):
-        return self.tokens[self.position] if self.position < len(self.tokens) else None
+        return self.tokens[self.pos] if self.pos < len(self.tokens) else None
 
     def consume(self):
-        if self.position < len(self.tokens):
-            self.position += 1
+        if self.pos < len(self.tokens):
+            self.pos += 1
 
     def peek_and_consume(self):
         token = self.peek()

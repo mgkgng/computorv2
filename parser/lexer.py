@@ -1,7 +1,10 @@
+from .token import Token, TokenType
+
 class Lexer:
-    def __init__(self, str):
+    def run(self, str):
         self.str = str.replace(' ', '')
         self.pos = 0
+        return self.tokenize()
 
     def tokenize(self):
         tokens = []
@@ -10,44 +13,44 @@ class Lexer:
 
             if c in '+*-/^%':
                 if len(self.str[self.pos:]) > 2 and self.str[self.pos:self.pos + 2] == '**':
-                    tokens.append(Token('**', TokenType.OPERATOR, '**'))
+                    tokens.append(Token(TokenType.OPERATOR, '**'))
                     self.pos += 2
                 else:
-                    tokens.append(Token(c, TokenType.OPERATOR, c))
+                    tokens.append(Token(TokenType.OPERATOR, c))
                     self.pos += 1
             elif c in '()':
-                tokens.append(Token(c, TokenType.PAREN_L if c == '(' else TokenType.PAREN_R, c))
+                tokens.append(Token(TokenType.PAREN_L if c == '(' else TokenType.PAREN_R, c))
                 self.pos += 1
             elif c.isdigit():
                 num = self.get_num_str(self.str[self.pos:])
-                tokens.append(Token(c, TokenType.NUMBER, num))
+                tokens.append(Token(TokenType.NUMBER, num))
                 self.pos += len(num)
             elif c.isalpha():
                 name, token_type = self.get_var_or_func_str(self.str[self.pos:])
                 if token_type == TokenType.VARIABLE:
-                    tokens.append(Token(c, TokenType.VARIABLE, name.lower()))
+                    tokens.append(Token(TokenType.VARIABLE, name.lower()))
                 elif token_type == TokenType.IMAGINARY_UNIT:
-                    tokens.append(Token(c, TokenType.IMAGINARY_UNIT, name.lower()))
+                    tokens.append(Token(TokenType.IMAGINARY_UNIT, name.lower()))
                 else:
-                    tokens.append(Token(c, TokenType.FUNCTION, name.lower()))
+                    tokens.append(Token(TokenType.FUNCTION, name.lower()))
                 self.pos += len(name)
             elif c == '[]':
-                tokens.append(Token(c, TokenType.MATRIX_OPEN if c == '[' else TokenType.MATRIX_CLOSE, c))
+                tokens.append(Token(TokenType.MATRIX_OPEN if c == '[' else TokenType.MATRIX_CLOSE, c))
                 self.pos += 1
             elif c == ',':
-                tokens.append(Token(c, TokenType.MATRIX_ELEM_DELIM, c))
+                tokens.append(Token(TokenType.MATRIX_ELEM_DELIM, c))
                 self.pos += 1
             elif c == ';':
-                tokens.append(Token(c, TokenType.MATRIX_ROW_DELIM, c))
+                tokens.append(Token(TokenType.MATRIX_ROW_DELIM, c))
                 self.pos += 1
             elif c == '?':
-                tokens.append(Token(c, TokenType.SOLUTION, c))
+                tokens.append(Token(TokenType.SOLUTION, c))
                 self.pos += 1
             elif c == '=':
-                tokens.append(Token(c, TokenType.EQUAL, c))
+                tokens.append(Token(TokenType.EQUAL, c))
                 self.pos += 1
             else:
-                raise Exception("Invalid character")
+                raise Exception("Invalid character", c)
         return tokens
 
     @staticmethod
@@ -78,4 +81,4 @@ class Lexer:
             i += 1
         if open > 0:
             raise Exception("Invalid matrix")
-        return str[:i]
+        return str[:i]        

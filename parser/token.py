@@ -31,7 +31,3 @@ class Token:
 
     def __str__(self):
         return f"Token({self.type}, {self.value})"
-    
-
-
-    
