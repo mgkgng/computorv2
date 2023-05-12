@@ -1,6 +1,6 @@
 class Polynomial:
     def __init__(self, coeffs, variable=None):
-        if not coeffs or not isinstance(coeffs, list) or len():
+        if not coeffs or not isinstance(coeffs, list) or len(coeffs) == 0:
             raise ValueError("Polynomial coefficients should be a non-empty list")
         
         # coefficients index: 0 -> x^0, 1 -> x^1, 2 -> x^2, ...

@@ -4,9 +4,12 @@ from type import Complex, Rational, Matrix, Polynomial, Function
 from fractions import Fraction
 
 class Interpreter:
-    def __init__(self, root, type):
+    def __init__(self, root, ast_type):
         self.root = root
-        self.type = type
+        self.ast_type = ast_type
+
+    def run(self):
+        return self.visit(self.root)
 
     def visit(self, node):
         if isinstance(node, Number):
@@ -61,7 +64,7 @@ class Interpreter:
         elif node.op == '**':
             if not isinstance(left, Matrix) or not isinstance(right, Matrix):
                 raise TypeError("Both operands should be matrices for vector multiplication")
-            return left @ right
+            return left ** right
         else:
             raise ValueError(f"Unknown operator: {node.op}")            
 
@@ -82,8 +85,10 @@ class Interpreter:
         return Matrix(rows)
 
     def visit_equation(self, node):
-        left = self.visit(node.left)
-        if self.ast_type == AST_TYPE.ASSIGN and not isinstance(left, VariableNode) and not isinstance(left, FunctionNode): # TODO function declaration
+        if self.ast_type == AST_TYPE.ASSIGN and not isinstance(node.left, VariableNode) and not isinstance(node.left, FunctionNode): # TODO function declaration
             raise ValueError("The left side of the equation must declare a variable or function when it is an assignment")
+        left = self.visit(node.left)
         right = self.visit(node.right)
+
+        print('done!')
         return left, right

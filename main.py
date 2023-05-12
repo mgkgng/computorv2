@@ -18,9 +18,10 @@ if __name__ == "__main__":
             print_tokens(tokens)
             print('parser begins')
             ast = parser.run(tokens)
+            print(ast)
             print('interpreter begins')
             interpreter = Interpreter(ast.root, ast.type)
-            left, right = interpreter.visit()
+            left, right = interpreter.run()
             print('computor begins')
             if ast.type == AST_TYPE.ASSIGN:
                 res = computor.assign(left, right)
