@@ -3,6 +3,8 @@ from parser import Lexer, Parser, AST_TYPE
 from interpreter import Interpreter
 from utils import print_tokens
 import sys
+import traceback
+
 
 if __name__ == "__main__":
     computor = Computor()
@@ -26,10 +28,11 @@ if __name__ == "__main__":
             if ast.type == AST_TYPE.ASSIGN:
                 res = computor.assign(left, right)
             elif ast.type == AST_TYPE.COMPUTE_VAL:
-                res = computor.compute(left, right)
+                res = computor.compute_val(left)
             elif ast.type == AST_TYPE.COMPUTE_SOL:
-                res = computor.compute(left, right)
+                res = computor.compute_sol(left, right)
             print(res)
+            print(computor)
         except KeyboardInterrupt:
             print("\nKeyboardInterrupt")
             break
@@ -38,3 +41,7 @@ if __name__ == "__main__":
             break
         except Exception as e:
             print("Error:", e)
+            traceback_info = traceback.format_exc()
+            print(traceback_info)
+
+

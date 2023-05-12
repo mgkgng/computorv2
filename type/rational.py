@@ -17,50 +17,34 @@ class Rational:
 
     def __add__(self, other):
         if isinstance(other, Rational):
-            numerator = self.numerator * other.denominator + other.numerator * self.denominator
-            denominator = self.denominator * other.denominator
-            return Rational(numerator, denominator)
-        elif isinstance(other, Complex):
+            return Rational(self.numerator * other.denominator + other.numerator * self.denominator, \
+                self.denominator * other.denominator)
+        elif isinstance(other, int) or isinstance(other, float):
+            return Rational(self.numerator + other * self.denominator, self.denominator)
+        else:
             return other + self
-        elif isinstance(other, Polynomial):
-            coef = other.coefficients
-            coef[0] += self.numerator / self.denominator
-            return Polynomial(coef, other.variable)
-        elif isinstance(other, Matrix):
-            raise TypeError("Cannot add a rational number to a matrix")
-        elif isinstance(other, Function):
-            raise TypeError("Cannot add a rational number to a function")
+    
+    def __radd__(self, other):
+        return self + other
 
     def __sub__(self, other):
         if isinstance(other, Rational):
             numerator = self.numerator * other.denominator - other.numerator * self.denominator
             denominator = self.denominator * other.denominator
             return Rational(numerator, denominator)
-        elif isinstance(other, Complex):
-            return Complex(self.numerator / self.denominator - other.real, -other.imaginary)
-        elif isinstance(other, Polynomial):
-            pass
-        elif isinstance(other, Matrix):
-            raise TypeError("Cannot subtract a rational number from a matrix")
-        elif isinstance(other, Function):
-            raise TypeError("Cannot subtract a rational number from a function")
+        else:
+            return -other + self
 
     def __mul__(self, other):
         if isinstance(other, Rational):
-            numerator = self.numerator * other.numerator
-            denominator = self.denominator * other.denominator
-            return Rational(numerator, denominator)
-        elif isinstance(other, Complex):
+            return Rational(self.numerator * other.numerator, self.denominator * other.denominator)
+        elif isinstance(other, int) or isinstance(other, float):
+            return Rational(self.numerator * other, self.denominator)
+        else:
             return other * self
-        elif isinstance(other, Polynomial):
-            coef = other.coefficients
-            for i in range(len(coef)):
-                coef[i] *= self.numerator / self.denominator
-            return Polynomial(coef, other.variable)
-        elif isinstance(other, Matrix):
-            return other * self
-        elif isinstance(other, Function):
-            raise TypeError("Cannot multiply a rational number by a function")
+
+    def __rmul__(self, other):
+        return self * other
 
     def __truediv__(self, other):
         if isinstance(other, Rational):
@@ -70,14 +54,8 @@ class Rational:
             numerator = self.numerator * other.denominator
             denominator = self.denominator * other.numerator
             return Rational(numerator, denominator)
-        elif isinstance(other, Complex):   
-            return Complex(self.numerator / self.denominator, 0) / other
-        elif isinstance(other, Polynomial):
-            pass
-        elif isinstance(other, Matrix):
-            raise TypeError("Cannot divide a rational number by a matrix")
-        elif isinstance(other, Function):
-            raise TypeError("Cannot divide a rational number by a function")
+        else:
+            return other ** -1 * self
     
     def __str__(self):
         if self.denominator == 1:
@@ -92,4 +70,15 @@ class Rational:
         return float(self.numerator) / float(self.denominator)
 
     def __eq__(self, other):
+        if isinstance(other, int) or isinstance(other, float):
+            return self.to_float() == other
         return self.to_float() == other.to_float()
+
+    def __pow__(self, power):
+        if isinstance(power, int) and power >= 0:
+            return Rational(self.numerator ** power, self.denominator ** power)
+        else:
+            return self.to_float() ** power
+    
+    def __rpow__(self, other):
+        return other ** self.to_float()

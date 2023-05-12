@@ -12,6 +12,7 @@ class Computor:
                 raise TypeError("Cannot assign a polynomial or a function to a variable")
             if not left.coeffs == [0, 1]:
                 raise TypeError("Wrong variable format")
+            print('checking type', type(right))
             self.vars[left.variable] = right
         elif isinstance(left, Function):
             if isinstance(right, Function):
@@ -106,3 +107,6 @@ class Computor:
         print('The solutions are:')
         for root in roots:
             print(root)
+
+    def __str__(self):
+        return f"vars: {self.vars}\nfuncs: {self.funcs}"

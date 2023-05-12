@@ -41,6 +41,8 @@ class Interpreter:
         left = self.visit(node.left)
         right = self.visit(node.right)
 
+        print('type: ', type(left), type(right))
+
         if node.op == '+':
             return left + right
         elif node.op == '-':
@@ -88,7 +90,5 @@ class Interpreter:
         if self.ast_type == AST_TYPE.ASSIGN and not isinstance(node.left, VariableNode) and not isinstance(node.left, FunctionNode): # TODO function declaration
             raise ValueError("The left side of the equation must declare a variable or function when it is an assignment")
         left = self.visit(node.left)
-        right = self.visit(node.right)
-
-        print('done!')
+        right = self.visit(node.right) if self.ast_type != AST_TYPE.COMPUTE_VAL else None
         return left, right

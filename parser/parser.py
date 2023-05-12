@@ -4,14 +4,15 @@ from .node import Equation, BinaryOperator, Number, VariableNode, MatrixNode, Fu
 
 class Parser:
     def run(self, tokens):
-        self.tokens = tokens
-        self.pos = 0
-        self.ast = None
-        if tokens[:-1] == TokenType.SOLUTION:
-            self.ast_type = AST_TYPE.COMPUTE_SOL if tokens[-2].type == TokenType.EQUAL else AST_TYPE.COMPUTE_VAL
-            tokens = tokens[:-1]
+        self.validate_lexer_tokens(tokens)
+        if tokens[-1].type == TokenType.SOLUTION:
+            self.ast_type = AST_TYPE.COMPUTE_VAL if tokens[-2].type == TokenType.EQUAL else AST_TYPE.COMPUTE_SOL
+            self.tokens = tokens[:-1]
         else:
             self.ast_type = AST_TYPE.ASSIGN
+            self.tokens = tokens
+        self.pos = 0
+        self.ast = None
         return self.parse()
 
     def peek(self):
@@ -45,7 +46,6 @@ class Parser:
         self.consume()
 
     def parse(self):
-        self.validate_lexer_tokens()
         equation = self.parse_equation()
         self.ast = ASTWrapper(equation, self.ast_type)
         return self.ast
@@ -53,14 +53,16 @@ class Parser:
     def parse_equation(self):
         left = self.parse_expression()
         self.expect(TokenType.EQUAL)
-        right = self.parse_expression()
+        right = self.parse_expression() if self.ast_type != AST_TYPE.COMPUTE_VAL else None
         return Equation(left, right)
 
     def parse_expression(self):
         left = self.parse_term()
         while self.peek() is not None and self.peek().type == TokenType.OPERATOR and self.peek().value in "+-":
+            print('expression: ', self.peek())
             operator_token = self.peek()
             self.consume()
+            print('expression: ', self.peek())
             right = self.parse_term()
             left = BinaryOperator(left, operator_token.value, right)
         return left
@@ -69,6 +71,7 @@ class Parser:
         left_factor = self.parse_exponent()
 
         while self.peek() is not None and self.peek().type == TokenType.OPERATOR and self.peek().value in ['*', '/', '^', '%', '**']:
+            print("term: ", self.peek())
             op = self.peek_and_consume()
             right_factor = self.parse_exponent()
             left_factor = BinaryOperator(left_factor, op.value, right_factor)
@@ -77,6 +80,7 @@ class Parser:
     def parse_exponent(self):
         base = self.parse_factor()
         if self.peek() is not None and self.peek().type == TokenType.OPERATOR and self.peek().value == '^':
+            print("exponent: ", self.peek())
             self.consume()
             self.rejects([TokenType.OPERATOR, TokenType.FUNCTION, TokenType.MATRIX])
             exponent = self.parse_factor()
@@ -85,6 +89,7 @@ class Parser:
 
     def parse_factor(self):
         token = self.peek()
+        print("factor:", token)
 
         if token.type == TokenType.OPERATOR and token.value in '+-':
             self.consume()
@@ -100,7 +105,7 @@ class Parser:
             self.consume()
             return VariableNode(token.value)
 
-        elif token.type == TokenType.OPEN_PAREN:
+        elif token.type == TokenType.PAREN_L:
             self.consume()
             expression = self.parse_expression()
             self.expect(TokenType.CLOSE_PAREN)
@@ -108,7 +113,7 @@ class Parser:
 
         elif token.type == TokenType.FUNCTION:
             self.consume()
-            self.expect(TokenType.OPEN_PAREN)
+            self.expect(TokenType.PAREN_L)
             expression = self.parse_expression()
             self.expect(TokenType.CLOSE_PAREN)
             return FunctionNode(token.value, expression)
@@ -133,16 +138,17 @@ class Parser:
             if delim == TokenType.MATRIX_ELEM_DELIM:
                 return MatrixRow(vec)
             return MatrixNode(token.value, expression)
-
+            
         else:
             raise ValueError(f"Unexpected token: {token}")
 
 
-    def validate_lexer_tokens(self):
-        equal_tokens = [i for i, token in enumerate(self.tokens) if token.type == TokenType.EQUAL]
-        solution_tokens = [i for i, token in enumerate(self.tokens) if token.type == TokenType.SOLUTION]
+    def validate_lexer_tokens(self, tokens):
+        equal_tokens = [i for i, token in enumerate(tokens) if token.type == TokenType.EQUAL]
+        solution_tokens = [i for i, token in enumerate(tokens) if token.type == TokenType.SOLUTION]
 
         if len(equal_tokens) != 1 or len(solution_tokens) > 1:
             raise ValueError("Invalid number of equal or solution tokens")
-        if equal_tokens[0] == 0 or equal_tokens[0] == len(self.tokens) - 1 or (len(solution_tokens) and solution_tokens[0] != len(self.tokens) - 1):
+        if equal_tokens[0] == 0 or equal_tokens[0] == len(tokens) - 1 \
+            or (len(solution_tokens) and solution_tokens[0] != len(tokens) - 1):
             raise ValueError("Invalid position of equal or solution tokens")

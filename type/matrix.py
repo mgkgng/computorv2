@@ -1,3 +1,6 @@
+from .rational import Rational
+from .complex import Complex
+
 class Matrix:
     def __init__(self, elements):        
         row_length = len(elements[0])

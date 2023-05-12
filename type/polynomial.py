@@ -1,3 +1,5 @@
+from .function import Function
+
 class Polynomial:
     def __init__(self, coeffs, variable=None):
         if not coeffs or not isinstance(coeffs, list) or len(coeffs) == 0:
@@ -41,7 +43,7 @@ class Polynomial:
             if self.variable != other.variable:
                 # if variables are different, I will treat them as constants
                 coeffs1 = self.coeffs
-                coeffs1[0] += other
+                coeffs1[0] = coeffs1[0] + other
                 return Polynomial(coeffs1, self.variable)
 
             deg = max(len(self.coeffs), len(other.coeffs))
@@ -60,8 +62,14 @@ class Polynomial:
         else:
             return self + Polynomial([other])
 
+    def __radd__(self, other):
+        return self + other
+
     def __sub__(self, other):
         return self + (-other)
+
+    def __rsub__(self, other):
+        return (-self) + other
 
     def __mul__(self, other):
         if isinstance(other, Polynomial):
@@ -81,6 +89,9 @@ class Polynomial:
             raise TypeError("Cannot multiply a polynomial by a function")
         else:
             return self * Polynomial([other])
+
+    def __rmul__(self, other):
+        return self * other
 
     def __call__(self, x):
         return sum([coef * x ** i for i, coef in enumerate(self.coeffs)])

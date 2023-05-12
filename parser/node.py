@@ -9,7 +9,7 @@ class Equation(Node):
     def __str__(self, level=0):
         ret = "\t"*level + "Equation:\n"
         ret += "left:" + self.left.__str__(level + 1)
-        ret += "right:" + self.right.__str__(level + 1)
+        ret += "right:" + self.right.__str__(level + 1) if self.right else ""
         return ret
 
 
@@ -58,7 +58,6 @@ class VariableNode(Expression):
     def __str__(self, level=0):
         return "\t"*level + f"VariableNode: {self.name}\n"
 
-
 class Number(Expression):
     def __init__(self, value):
         self.value = value
@@ -83,7 +82,6 @@ class MatrixNode(Expression):
         for row in self.rows:
             ret += row.__str__(level + 1)
         return ret
-
 
 class MatrixRow(Expression):
     def __init__(self, elems):
