@@ -110,14 +110,14 @@ class Parser:
         elif token.type == TokenType.PAREN_L:
             self.consume()
             expression = self.parse_expression()
-            self.expect(TokenType.CLOSE_PAREN)
+            self.expect(TokenType.PAREN_R)
             return expression
 
         elif token.type == TokenType.FUNCTION:
             self.consume()
             self.expect(TokenType.PAREN_L)
             expression = self.parse_expression()
-            self.expect(TokenType.CLOSE_PAREN)
+            self.expect(TokenType.PAREN_R)
             return FunctionNode(token.value, expression)
         
         elif token.type == TokenType.MATRIX_OPEN:

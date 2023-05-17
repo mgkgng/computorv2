@@ -128,6 +128,7 @@ class Polynomial:
             return res
 
         for i in range(len(self.coeffs)):
-            if isinstance(self.coeffs[i], Polynomial) and not self.coeffs[i] in vars:
+            if isinstance(self.coeffs[i], Polynomial) and self.coeffs[i].variable and not self.coeffs[i].variable in vars:
+                print(self.coeffs[i], self.coeffs[i].variable, vars)
                 raise ValueError("Polynomial with multiple variables cannot be evaluated")
         return self

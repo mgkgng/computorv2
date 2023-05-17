@@ -20,6 +20,8 @@ class Complex:
             return other + self
 
     def __radd__(self, other):
+        if isinstance(other, int) or isinstance(other, float):
+            return Complex(self.real + other, self.imaginary)
         return self + other
 
     def __sub__(self, other):
@@ -77,3 +79,15 @@ class Complex:
 
     def __eq__(self, other):
         return self.real == other.real and self.imaginary == other.imaginary
+
+    def __pow__(self, power):
+        if power < 0:
+            raise TypeError("Power of complex number must be an integer greater than or equal to 0")
+        if power == 0:
+            return Rational(1)
+        elif power == 1:
+            return self
+        else:
+            while power > 1:
+                self = self * self
+                power -= 1

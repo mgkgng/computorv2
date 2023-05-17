@@ -38,11 +38,10 @@ class UnaryOperator(Expression):
         ret += self.operand.__str__(level + 1)
         return ret
 
-
 class FunctionNode(Expression):
-    def __init__(self, name, args):
+    def __init__(self, name, arg):
         self.name = name
-        self.args = args
+        self.arg = arg
     
     def __str__(self, level=0):
         ret = "\t"*level + f"FunctionNode: {self.name}\n"

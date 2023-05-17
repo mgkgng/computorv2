@@ -27,11 +27,11 @@ if __name__ == "__main__":
             print('computor begins')
             if ast.type == AST_TYPE.ASSIGN:
                 res = computor.assign(left, right)
-                print(res)
             elif ast.type == AST_TYPE.COMPUTE_VAL:
-                computor.compute_val(left)
+                res = computor.compute_val(left)
             elif ast.type == AST_TYPE.COMPUTE_SOL:
-                computor.compute_sol(left, right)
+                res = computor.compute_sol(left, right)
+            print(res)
             print(computor)
         except KeyboardInterrupt:
             print("\nKeyboardInterrupt")
