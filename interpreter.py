@@ -30,8 +30,10 @@ class Interpreter:
             raise ValueError(f"Unexpected node type: {type(node)}")
 
     def visit_number(self, node):
-        fraction = Fraction(node.value)
-        return Rational(fraction.numerator, fraction.denominator)
+        if node.is_real is True:
+            fraction = Fraction(node.value)
+            return Rational(fraction.numerator, fraction.denominator)
+        return Complex(0, node.value)
 
     def visit_unary_operator(self, node):
         operand = self.visit(node.operand)

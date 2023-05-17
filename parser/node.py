@@ -59,8 +59,9 @@ class VariableNode(Expression):
         return "\t"*level + f"VariableNode: {self.name}\n"
 
 class Number(Expression):
-    def __init__(self, value):
+    def __init__(self, value, is_real=True):
         self.value = value
+        self.is_real = is_real
 
     def __str__(self, level=0):
         return "\t"*level + f"Number: {self.value}\n"

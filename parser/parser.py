@@ -89,7 +89,6 @@ class Parser:
 
     def parse_factor(self):
         token = self.peek()
-        print("factor:", token)
 
         if token.type == TokenType.OPERATOR and token.value in '+-':
             self.consume()
@@ -99,6 +98,9 @@ class Parser:
 
         elif token.type == TokenType.NUMBER:
             self.consume()
+            if self.peek() is not None and self.peek().type == TokenType.IMAGINARY_UNIT:
+                self.consume()
+                return Number(float(token.value), False)
             return Number(float(token.value))
 
         elif token.type == TokenType.VARIABLE:
@@ -138,7 +140,11 @@ class Parser:
             if delim == TokenType.MATRIX_ELEM_DELIM:
                 return MatrixRow(vec)
             return MatrixNode(token.value, expression)
-            
+        
+        elif token.type == TokenType.IMAGINARY_UNIT:
+            self.consume()
+            return Number(1, False)
+
         else:
             raise ValueError(f"Unexpected token: {token}")
 

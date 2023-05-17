@@ -20,18 +20,18 @@ if __name__ == "__main__":
             print_tokens(tokens)
             print('parser begins')
             ast = parser.run(tokens)
-            print(ast)
+            # print(ast)
             print('interpreter begins')
             interpreter = Interpreter(ast.root, ast.type)
             left, right = interpreter.run()
             print('computor begins')
             if ast.type == AST_TYPE.ASSIGN:
                 res = computor.assign(left, right)
+                print(res)
             elif ast.type == AST_TYPE.COMPUTE_VAL:
-                res = computor.compute_val(left)
+                computor.compute_val(left)
             elif ast.type == AST_TYPE.COMPUTE_SOL:
-                res = computor.compute_sol(left, right)
-            print(res)
+                computor.compute_sol(left, right)
             print(computor)
         except KeyboardInterrupt:
             print("\nKeyboardInterrupt")

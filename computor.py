@@ -12,7 +12,6 @@ class Computor:
                 raise TypeError("Cannot assign a polynomial or a function to a variable")
             if not left.coeffs == [0, 1]:
                 raise TypeError("Wrong variable format")
-            print('checking type', type(right))
             self.vars[left.variable] = right
         elif isinstance(left, Function):
             if isinstance(right, Function):
@@ -49,21 +48,18 @@ class Computor:
             left = self.funcs[left.name](left.arg)
             left.substitute(self.vars)
 
-        if not isinstance(left, Polynomial):
-            left = Polynomial([left])
-        if not isinstance(right, Polynomial):
-            right = Polynomial([right])
-
         if isinstance(left, Polynomial):
             left = left.substitute(self.vars)
         if isinstance(right, Polynomial):
             right = right.substitute(self.vars)
 
+        if not isinstance(left, Polynomial):
+            left = Polynomial([left])
+        if not isinstance(right, Polynomial):
+            right = Polynomial([right])
         if left.variable != right.variable:
-            raise TypeError("Cannot compare two polynomials with different variables")
-        else:
-            right = Polynomial([right], left.variable)
-        
+            raise TypeError("Cannot compare a polynomial with a different variable")
+                        
         # TODO maybe plot both sides of the equation here
 
         new_poly = left - right
@@ -77,14 +73,17 @@ class Computor:
             self.solve_cubic(new_poly.coeffs)
         else:
             print('The polynomial degree is stricly greater than 2, I can\'t solve.')
-        
+
+    @staticmethod    
     def solve_constant(coef):
         print('All real numbers are solution' if coef[0] == 0 else 'There is no solution')
 
+    @staticmethod
     def solve_linear(coefs):
         print('The solution is:')
         print(-coefs[0] / coefs[1])
 
+    @staticmethod
     def solve_quadratic(coefs):
         a = coefs[2]
         b = coefs[1]
@@ -102,6 +101,7 @@ class Computor:
             print(f'{(-b - discriminant ** 0.5) / (2 * a)}')
             print(f'{(-b + discriminant ** 0.5) / (2 * a)}')
     
+    @staticmethod
     def solve_cubic(coefs):
         roots = np.roots(coefs[::-1])
 
