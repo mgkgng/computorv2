@@ -26,6 +26,7 @@ class Computor:
 
     def compute_val(self, left):
         if isinstance(left, Polynomial):
+            left.substitute(self.vars)
             if left.variable not in self.vars:
                 raise ValueError(f"Variable {left.variable} is not defined")
             return left(self.vars[left.variable])

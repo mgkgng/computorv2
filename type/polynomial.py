@@ -1,4 +1,5 @@
 from .function import Function
+from .rational import Rational
 
 class Polynomial:
     def __init__(self, coeffs, variable=None):
@@ -25,7 +26,7 @@ class Polynomial:
             if coef == 0:
                 continue
             
-            term = str(coef) if i == 0 or abs(coef) != 1 else "-" if coef < 0 else ""
+            term = str(coef) if i == 0 or ((isinstance(coef, int) or isinstance(coef, Rational)) and abs(coef) != 1) else "-" if (isinstance(coef, int) or isinstance(coef, Rational)) and coef < 0 else ""
             if i > 0:
                 term += self.variable
                 if i > 1:

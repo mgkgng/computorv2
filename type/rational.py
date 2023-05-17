@@ -82,3 +82,26 @@ class Rational:
     
     def __rpow__(self, other):
         return other ** self.to_float()
+
+    def __abs__(self):
+        return abs(self.to_float())
+
+    def __lt__(self, other):
+        if isinstance(other, int) or isinstance(other, float):
+            return self.to_float() < other
+        return self.to_float() < other.to_float()
+
+    def __le__(self, other):
+        if isinstance(other, int) or isinstance(other, float):
+            return self.to_float() <= other
+        return self.to_float() <= other.to_float()
+
+    def __gt__(self, other):
+        if isinstance(other, int) or isinstance(other, float):
+            return self.to_float() > other
+        return self.to_float() > other.to_float()
+
+    def __ge__(self, other):
+        if isinstance(other, int) or isinstance(other, float):
+            return self.to_float() >= other
+        return self.to_float() >= other.to_float()
