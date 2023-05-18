@@ -2,8 +2,8 @@ from computor import Computor
 from parser import Lexer, Parser, AST_TYPE
 from interpreter import Interpreter
 from utils import print_tokens
-import sys
 import traceback
+import readline
 
 
 if __name__ == "__main__":
@@ -13,14 +13,12 @@ if __name__ == "__main__":
     while True:
         try:
             s = input(">>> ")
-            if s == "exit":
-                sys.exit('Bye')
-            print('lexer begins')
+            readline.add_history(s)
             tokens = lexer.run(s)
             print_tokens(tokens)
             print('parser begins')
             ast = parser.run(tokens)
-            # print(ast)
+            print(ast)
             print('interpreter begins')
             interpreter = Interpreter(ast.root, ast.type)
             left, right = interpreter.run()

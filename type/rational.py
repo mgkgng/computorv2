@@ -80,6 +80,11 @@ class Rational:
         else:
             return self.to_float() ** power
     
+    def __mod__(self, other):
+        if isinstance(other, int) or isinstance(other, float):
+            return self.to_float() % other
+        return self.to_float() % other.to_float()
+
     def __rpow__(self, other):
         return other ** self.to_float()
 

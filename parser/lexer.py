@@ -34,7 +34,7 @@ class Lexer:
                 else:
                     tokens.append(Token(TokenType.FUNCTION, name.lower()))
                 self.pos += len(name)
-            elif c == '[]':
+            elif c in '[]':
                 tokens.append(Token(TokenType.MATRIX_OPEN if c == '[' else TokenType.MATRIX_CLOSE, c))
                 self.pos += 1
             elif c == ',':

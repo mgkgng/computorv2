@@ -89,10 +89,13 @@ class Parser:
 
     def parse_factor(self):
         token = self.peek()
+        print("factor: ", token)
 
         if token.type == TokenType.OPERATOR and token.value in '+-':
             self.consume()
-            self.reject(TokenType.OPERATOR)
+            next_token = self.peek()
+            if next_token is None or next_token.type in [TokenType.OPERATOR, TokenType.FUNCTION]:
+                raise ValueError(f"Expected token not of type {token.type}, but got {token.type if token else None}")
             factor = self.parse_factor()
             return UnaryOperator(token.value, factor)
 
@@ -126,12 +129,13 @@ class Parser:
             vec = []
             vec.append(self.parse_expression())
 
+            delim = None
             if self.peek() is not None and self.peek().type == TokenType.MATRIX_ELEM_DELIM:
                 delim = TokenType.MATRIX_ELEM_DELIM
             elif self.peek() is not None and self.peek().type == TokenType.MATRIX_ROW_DELIM:
                 delim = TokenType.MATRIX_ROW_DELIM
 
-            while self.peek() is not None and self.peek().type == delim:
+            while self.peek() is not None and delim and self.peek().type == delim:
                 self.consume()
                 vec.append(self.parse_expression())
 
@@ -139,7 +143,7 @@ class Parser:
 
             if delim == TokenType.MATRIX_ELEM_DELIM:
                 return MatrixRow(vec)
-            return MatrixNode(token.value, expression)
+            return MatrixNode(vec)
         
         elif token.type == TokenType.IMAGINARY_UNIT:
             self.consume()

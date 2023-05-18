@@ -85,7 +85,7 @@ class Interpreter:
     def visit_matrix(self, node):
         rows = []
         for row in node.rows:
-            rows.append([self.visit(element) for element in row])
+            rows.append([self.visit(element) for element in row.elems])
         return Matrix(rows)
 
     def visit_equation(self, node):

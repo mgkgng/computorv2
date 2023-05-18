@@ -70,9 +70,9 @@ class MatrixNode(Expression):
     def __init__(self, rows):
         if len(rows) == 0:
             raise Exception("Empty matrix")
-        elem_count = len(rows[0].elem)
+        elem_count = len(rows[0].elems)
         for row in rows:
-            if len(row.elem) != elem_count:
+            if len(row.elems) != elem_count:
                 raise Exception("Invalid matrix")
         self.rows = rows
         self.shape = (len(rows), elem_count)

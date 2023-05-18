@@ -18,7 +18,7 @@ class Matrix:
         return self * -1
 
     def __str__(self):
-        return "\n".join([" ".join(map(str, row)) for row in self.elements])
+        return "\n".join(["[ " + " , ".join(map(str, row)) + " ]" for row in self.elements])
 
     def __repr__(self):
         return self.__str__()
