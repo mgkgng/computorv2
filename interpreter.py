@@ -1,5 +1,5 @@
 from parser import AST_TYPE
-from parser import Number, BinaryOperator, UnaryOperator, FunctionNode, VariableNode, MatrixNode, Equation, MatrixRow
+from parser import Number, BinaryOperator, UnaryOperator, FunctionNode, VariableNode, MatrixNode, Equation, MatrixRow, Factorial
 from type import Complex, Rational, Matrix, Polynomial, Function
 from fractions import Fraction
 from decimal import Decimal
@@ -27,6 +27,8 @@ class Interpreter:
             return self.visit_matrix(node)
         elif isinstance(node, Equation):
             return self.visit_equation(node)
+        elif isinstance(node, Factorial):
+            return self.visit_factorial(node)
         else:
             raise ValueError(f"Unexpected node type: {type(node)}")
 
@@ -90,6 +92,12 @@ class Interpreter:
         for row in node.rows:
             rows.append([self.visit(element) for element in row.elems])
         return Matrix(rows)
+    
+    def visit_factorial(self, node):
+        # TODO: check if the operand is an integer
+        # TODO2: deal with polynomial
+        operand = self.visit(node.operand)
+        return operand.factorial()
 
     def visit_equation(self, node):
         if self.ast_type == AST_TYPE.ASSIGN and not isinstance(node.left, VariableNode) and not isinstance(node.left, FunctionNode): # TODO function declaration

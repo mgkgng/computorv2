@@ -51,6 +51,9 @@ class Lexer:
             elif c == '=':
                 tokens.append(Token(TokenType.EQUAL, c))
                 self.pos += 1
+            elif c == '!':
+                tokens.append(Token(TokenType.FACTORIAL, c))
+                self.pos += 1
             else:
                 raise Exception("Invalid character", c)
         return tokens
@@ -67,10 +70,14 @@ class Lexer:
         i = 0
         while i < len(str) and str[i].isalpha():
             i += 1
+
+        name = str[:i].lower()
         token_type = TokenType.FUNCTION if i < len(str) and str[i] == '(' else TokenType.VARIABLE
-        if token_type == TokenType.VARIABLE and str[:i].lower() == 'i':
+        if token_type == TokenType.VARIABLE and name in ['sin', 'cos', 'tan', 'cot', 'sec', 'csc', 'log', 'ln', 'sqrt', 'abs', 'exp']:
+            raise Exception(f"You cannot use '{name}' as a variable name")
+        if token_type == TokenType.VARIABLE and name == 'i':
             token_type = TokenType.IMAGINARY_UNIT
-        elif token_type == TokenType.FUNCTION and str[:i].lower() == 'i':
+        elif token_type == TokenType.FUNCTION and name == 'i':
             raise Exception("Invalid function name")
         return str[:i], token_type
 

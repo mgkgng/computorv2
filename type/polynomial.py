@@ -1,5 +1,7 @@
 from .function import Function
 from .rational import Rational
+import matplotlib.pyplot as plt
+import numpy as np
 
 class Polynomial:
     def __init__(self, coeffs, variable=None):
@@ -139,3 +141,15 @@ class Polynomial:
                 print(self.coeffs[i], self.coeffs[i].variable, vars)
                 raise ValueError("Polynomial with multiple variables cannot be evaluated")
         return self
+
+    def plot(self):
+        x = np.linspace(-10, 10, 100)
+        y = np.polyval(self.coeffs[::-1], x)
+        # y = np.vectorize(self.__call__)(x)
+        plt.plot(x, y)
+        plt.show()
+
+        # x = np.linspace(-10, 10, 100)
+        # y = np.polyval(coeff.reverse(), x)
+        # plt.plot(x, y)
+        # plt.show()

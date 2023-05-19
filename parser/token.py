@@ -14,6 +14,7 @@ class TokenType(Enum):
     MATRIX_CLOSE = auto()
     MATRIX_ELEM_DELIM = auto()
     MATRIX_ROW_DELIM = auto()
+    FACTORIAL = auto()
 
 class Token:
     def __init__(self, type, value):

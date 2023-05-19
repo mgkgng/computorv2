@@ -1,6 +1,6 @@
 from .token import TokenType
 from .ast import ASTWrapper, AST_TYPE
-from .node import Equation, BinaryOperator, Number, VariableNode, MatrixNode, FunctionNode, UnaryOperator, MatrixRow
+from .node import Equation, BinaryOperator, Number, VariableNode, MatrixNode, FunctionNode, UnaryOperator, MatrixRow, Factorial
 
 class Parser:
     def run(self, tokens):
@@ -103,16 +103,26 @@ class Parser:
             if self.peek() is not None and self.peek().type == TokenType.IMAGINARY_UNIT:
                 self.consume()
                 return Number(float(token.value), False)
+            if self.peek() is not None and self.peek().type == TokenType.FACTORIAL:
+                self.consume()
+                return Factorial(float(token.value))
             return Number(float(token.value))
 
         elif token.type == TokenType.VARIABLE:
             self.consume()
-            return VariableNode(token.value)
+            res = VariableNode(token.value)
+            if self.peek() is not None and self.peek().type == TokenType.FACTORIAL:
+                self.consume()
+                return Factorial(res)
+            return res
 
         elif token.type == TokenType.PAREN_L:
             self.consume()
             expression = self.parse_expression()
             self.expect(TokenType.PAREN_R)
+            if self.peek() is not None and self.peek().type == TokenType.FACTORIAL:
+                self.consume()
+                return Factorial(expression)
             return expression
 
         elif token.type == TokenType.FUNCTION:

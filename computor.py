@@ -16,12 +16,16 @@ class Computor:
             if not left.coeffs == [0, 1]:
                 raise TypeError("Wrong variable format")
             self.vars[left.variable] = right
+            if left.variable in self.funcs:
+                del self.funcs[left.variable]
         elif isinstance(left, Function):
             if isinstance(right, Function):
                 raise TypeError("Cannot assign a function to another function")
             if isinstance(right, Polynomial) and right.variable != left.arg.variable and right.variable not in self.vars:
                 raise TypeError("Cannot assign a polynomial to a function with a different variable")
             self.funcs[left.name] = right
+            if left.name in self.vars:
+                del self.vars[left.name]
         else:
             raise ValueError(f"Unexpected node type: {type(left)}")
         return right
