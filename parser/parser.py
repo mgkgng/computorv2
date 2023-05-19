@@ -43,7 +43,6 @@ class Parser:
         token = self.peek()
         if token is None or token.type in token_types:
             raise ValueError(f"Expected token not of type {token.type}, but got {token.type if token else None}") # TODO
-        self.consume()
 
     def parse(self):
         equation = self.parse_equation()
@@ -82,7 +81,7 @@ class Parser:
         if self.peek() is not None and self.peek().type == TokenType.OPERATOR and self.peek().value == '^':
             print("exponent: ", self.peek())
             self.consume()
-            self.rejects([TokenType.OPERATOR, TokenType.FUNCTION, TokenType.MATRIX])
+            self.rejects([TokenType.OPERATOR, TokenType.FUNCTION, TokenType.MATRIX_OPEN])
             exponent = self.parse_factor()
             return BinaryOperator(base, '^', exponent)
         return base

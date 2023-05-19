@@ -27,6 +27,8 @@ class Lexer:
                 self.pos += len(num)
             elif c.isalpha():
                 name, token_type = self.get_var_or_func_str(self.str[self.pos:])
+                if len(tokens) > 0 and tokens[-1].type == TokenType.NUMBER:
+                    tokens.append(Token(TokenType.OPERATOR, '*'))
                 if token_type == TokenType.VARIABLE:
                     tokens.append(Token(TokenType.VARIABLE, name.lower()))
                 elif token_type == TokenType.IMAGINARY_UNIT:

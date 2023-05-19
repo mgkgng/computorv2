@@ -73,6 +73,8 @@ class Polynomial:
         return (-self) + other
 
     def __mul__(self, other):
+        if isinstance(other, int) or isinstance(other, Rational):
+            return Polynomial([coef * other for coef in self.coeffs], self.variable)
         if isinstance(other, Polynomial):
             if self.variable != other.variable:
                 # if variables are different, treat them as constants
@@ -98,6 +100,8 @@ class Polynomial:
         return sum([coef * x ** i for i, coef in enumerate(self.coeffs)])
     
     def __pow__(self, power):
+        if isinstance(power, Rational) and power.denominator == 1:
+            power = power.numerator
         if not isinstance(power, int):
             raise TypeError("Power should be an integer")
 
@@ -118,6 +122,7 @@ class Polynomial:
 
     def substitute(self, vars):
         for i in range(len(self.coeffs)):
+            print('cic', type(self.coeffs[i]))
             if isinstance(self.coeffs[i], Polynomial):
                 self.coeffs[i] = self.coeffs[i].substitute(vars)
         

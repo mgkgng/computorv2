@@ -1,7 +1,7 @@
 import math
 
 class Rational:
-    def __init__(self, numerator, denominator=1):
+    def __init__(self, numerator, denominator=1):    
         if denominator == 0:
             raise ValueError("Denominator cannot be 0")
 

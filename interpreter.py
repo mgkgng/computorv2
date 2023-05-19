@@ -2,6 +2,7 @@ from parser import AST_TYPE
 from parser import Number, BinaryOperator, UnaryOperator, FunctionNode, VariableNode, MatrixNode, Equation, MatrixRow
 from type import Complex, Rational, Matrix, Polynomial, Function
 from fractions import Fraction
+from decimal import Decimal
 
 class Interpreter:
     def __init__(self, root, ast_type):
@@ -31,7 +32,8 @@ class Interpreter:
 
     def visit_number(self, node):
         if node.is_real is True:
-            fraction = Fraction(node.value)
+            decimal_value = Decimal(str(node.value))
+            fraction = Fraction(decimal_value)
             return Rational(fraction.numerator, fraction.denominator)
         return Complex(0, node.value)
 

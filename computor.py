@@ -33,7 +33,9 @@ class Computor:
         elif isinstance(left, Function): # TODO chain of functions, variable in function ...
             if left.name in self.funcs:
                 res = self.funcs[left.name](left.arg)
+                print('bambam ici', type(res))
                 if isinstance(res, Polynomial):
+                    print('coucou ici', res.variable)
                     res.substitute(self.vars)
                 return res
             raise ValueError(f"Function {left.name} is not defined")

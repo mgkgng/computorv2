@@ -1,4 +1,5 @@
 from .rational import Rational
+from decimal import Decimal
 
 class Complex:
     def __init__(self, real, imaginary):
@@ -15,6 +16,7 @@ class Complex:
         if isinstance(other, Complex):
             return Complex(self.real + other.real, self.imaginary + other.imaginary)
         elif isinstance(other, Rational):
+            print('was it here???')
             return Complex(self.real + other.numerator / other.denominator, self.imaginary)
         else:
             return other + self

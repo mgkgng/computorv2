@@ -45,10 +45,8 @@ class FunctionNode(Expression):
     
     def __str__(self, level=0):
         ret = "\t"*level + f"FunctionNode: {self.name}\n"
-        for arg in self.args:
-            ret += arg.__str__(level + 1)
+        ret += self.arg.__str__(level + 1)
         return ret
-
 
 class VariableNode(Expression):
     def __init__(self, name):
