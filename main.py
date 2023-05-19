@@ -10,30 +10,29 @@ if __name__ == "__main__":
     lexer = Lexer()
     parser = Parser()
     while True:
-        print("Please put your input here. Type 'HELP' to see the usage.")
-        s = input(">>> ")
-        if s == 'HELP':
-            print('usage TODO')
-            print()
-            continue
-        if s == 'VARS':
-            computor.print_vars()
-            continue
-        if s == 'FUNCS':
-            computor.print_funcs()
-            continue
-        if s.startswith('PLOT '):
-            args = s.split(' ')
-            if len(args) != 2:
-                print("Usage: PLOT <function name>")
-                continue
-            if args[1] in computor.funcs:
-                computor.funcs[args[1]].plot()
-            else:
-                print(f"Function {args[1]} is not defined")
-            continue
-
         try:
+            print("Please put your input here. Type 'HELP' to see the usage.")
+            s = input(">>> ")
+            if s == 'HELP':
+                print('usage TODO')
+                print()
+                continue
+            if s == 'VARS':
+                computor.print_vars()
+                continue
+            if s == 'FUNCS':
+                computor.print_funcs()
+                continue
+            if s.startswith('PLOT '):
+                args = s.split(' ')
+                if len(args) != 2:
+                    print("Usage: PLOT <function name>")
+                    continue
+                if args[1] in computor.funcs:
+                    computor.funcs[args[1]].plot()
+                else:
+                    print(f"Function {args[1]} is not defined")
+                continue
             readline.add_history(s)
             tokens = lexer.run(s)
             print_tokens(tokens)

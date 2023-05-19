@@ -2,6 +2,7 @@ from .function import Function
 from .rational import Rational
 import matplotlib.pyplot as plt
 import numpy as np
+from functools import reduce
 
 class Polynomial:
     def __init__(self, coeffs, variable=None):
@@ -144,12 +145,16 @@ class Polynomial:
 
     def plot(self):
         x = np.linspace(-10, 10, 100)
-        y = np.polyval(self.coeffs[::-1], x)
-        # y = np.vectorize(self.__call__)(x)
+        apply_func = np.vectorize(lambda x: reduce(lambda sum, coeff : sum + coeff[1] * (x ** coeff[0]), enumerate(self.coeffs), 0))
+        y = apply_func(x)
+
+        plt.axhline(0, color='black')  # Add horizontal x-axis at y=0
+        plt.axvline(0, color='black')  # Add vertical y-axis at x=0
+        plt.xlabel('x')
+        plt.ylabel('f(x)')
         plt.plot(x, y)
+        plt.grid(True)
         plt.show()
 
-        # x = np.linspace(-10, 10, 100)
-        # y = np.polyval(coeff.reverse(), x)
-        # plt.plot(x, y)
-        # plt.show()
+    def __float__(self):
+        return float(self.coeffs[0])

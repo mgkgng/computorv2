@@ -1,4 +1,6 @@
 import math
+from decimal import Decimal
+from fractions import Fraction
 
 class Rational:
     def __init__(self, numerator, denominator=1):
@@ -6,6 +8,9 @@ class Rational:
 
         if denominator == 0:
             raise ValueError("Denominator cannot be 0")
+
+        print(numerator, denominator)
+        print(type(numerator), type(denominator))
 
         common_divisor = math.gcd(numerator, denominator)
         self.numerator = numerator // common_divisor
@@ -21,8 +26,14 @@ class Rational:
         if isinstance(other, Rational):
             return Rational(self.numerator * other.denominator + other.numerator * self.denominator, \
                 self.denominator * other.denominator)
-        elif isinstance(other, int) or isinstance(other, float):
+        elif isinstance(other, int):
             return Rational(self.numerator + other * self.denominator, self.denominator)
+        elif isinstance(other, float):
+            decimal_value = Decimal(str(other))
+            fraction = Fraction(decimal_value)
+            return Rational(self.numerator * fraction.denominator + fraction.numerator * self.denominator, \
+                self.denominator * fraction.denominator)
+
         else:
             return other + self
     
@@ -40,8 +51,12 @@ class Rational:
     def __mul__(self, other):
         if isinstance(other, Rational):
             return Rational(self.numerator * other.numerator, self.denominator * other.denominator)
-        elif isinstance(other, int) or isinstance(other, float):
+        elif isinstance(other, int):
             return Rational(self.numerator * other, self.denominator)
+        elif isinstance(other, float):
+            decimal_value = Decimal(str(other))
+            fraction = Fraction(decimal_value)
+            return Rational(self.numerator * fraction.numerator, self.denominator * fraction.denominator)
         else:
             return other * self
 
@@ -113,3 +128,6 @@ class Rational:
         if isinstance(other, int) or isinstance(other, float):
             return self.to_float() >= other
         return self.to_float() >= other.to_float()
+
+    def __float__(self):
+        return float(self.to_float())
