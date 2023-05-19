@@ -1,7 +1,9 @@
 import math
 
 class Rational:
-    def __init__(self, numerator, denominator=1):    
+    def __init__(self, numerator, denominator=1):
+        # print(numerator, denominator)
+
         if denominator == 0:
             raise ValueError("Denominator cannot be 0")
 
@@ -67,7 +69,8 @@ class Rational:
         return self.__str__()
 
     def to_float(self):
-        return float(self.numerator) / float(self.denominator)
+        res = float(self.numerator) / float(self.denominator)
+        return int(res) if res.is_integer() else res
 
     def __eq__(self, other):
         if isinstance(other, int) or isinstance(other, float):

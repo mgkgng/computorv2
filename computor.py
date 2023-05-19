@@ -8,6 +8,9 @@ class Computor:
 
     def assign(self, left, right):
         if isinstance(left, Polynomial):
+            if isinstance(right, Polynomial):
+                right = right.substitute(self.vars)
+
             if not isinstance(right, Rational) and not isinstance(right, Complex) and not isinstance(right, Matrix):
                 raise TypeError("Cannot assign a polynomial or a function to a variable")
             if not left.coeffs == [0, 1]:

@@ -127,7 +127,9 @@ class Polynomial:
                 self.coeffs[i] = self.coeffs[i].substitute(vars)
         
         if self.variable in vars:
-            res = self.coeffs[0] + sum([self.coeffs[i] * vars[self.variable] ** i for i in range(1, len(self.coeffs))])
+            constant = self.coeffs[0]
+            substituted = sum([self.coeffs[i] * vars[self.variable] ** i for i in range(1, len(self.coeffs))])
+            res = constant + substituted
             if isinstance(res, Polynomial):
                 return res.substitute(vars)
             return res

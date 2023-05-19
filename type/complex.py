@@ -75,9 +75,9 @@ class Complex:
 
     def __str__(self):
         if self.imaginary >= 0:
-            return f"{self.real} + {self.imaginary}i"
+            return f"{int(self.real) if self.real.is_integer() else self.real} + {int(self.imaginary) if self.imaginary.is_integer() else self.imaginary}i"
         else:
-            return f"{self.real} - {-self.imaginary}i"
+            return f"{int(self.real) if self.real.is_integer() else self.real} - {int(-self.imaginary) if self.imaginary.is_integer() else -self.imaginary}i"
 
     def __eq__(self, other):
         return self.real == other.real and self.imaginary == other.imaginary

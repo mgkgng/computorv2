@@ -46,6 +46,7 @@ class Interpreter:
         right = self.visit(node.right)
 
         print('type: ', type(left), type(right))
+        print('operator:', node.op)
 
         if node.op == '+':
             return left + right
