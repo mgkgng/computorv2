@@ -1,5 +1,6 @@
+from computor import computor
 from parser import AST_TYPE
-from parser import Number, BinaryOperator, UnaryOperator, FunctionNode, VariableNode, MatrixNode, Equation, MatrixRow
+from parser import Number, BinaryOperator, UnaryOperator, FunctionNode, VariableNode, MatrixNode, Equation, MatrixRow, Factorial
 from type import Complex, Rational, Matrix, Polynomial, Function
 from fractions import Fraction
 from decimal import Decimal
@@ -27,6 +28,8 @@ class Interpreter:
             return self.visit_matrix(node)
         elif isinstance(node, Equation):
             return self.visit_equation(node)
+        elif isinstance(node, Factorial):
+            return self.visit_factorial(node)
         else:
             raise ValueError(f"Unexpected node type: {type(node)}")
 
@@ -79,10 +82,16 @@ class Interpreter:
         return Complex(0, 1)
 
     def visit_variable(self, node):
+        if node.name in computor.vars:
+            return computor.vars[node.name]
         return Polynomial([0, 1], node.name)
 
     def visit_function(self, node):
         arg = self.visit(node.arg)
+        if node.name in computor.funcs and self.ast_type != AST_TYPE.ASSIGN:
+            res = computor.funcs[node.name](arg)
+            print("TRYING TRYING TRYING", res, type(res))
+            return computor.funcs[node.name](arg)
         return Function(node.name, arg)
 
     def visit_matrix(self, node):
@@ -90,6 +99,12 @@ class Interpreter:
         for row in node.rows:
             rows.append([self.visit(element) for element in row.elems])
         return Matrix(rows)
+    
+    def visit_factorial(self, node):
+        # TODO: check if the operand is an integer
+        # TODO2: deal with polynomial
+        operand = self.visit(node.operand)
+        return operand.factorial()
 
     def visit_equation(self, node):
         if self.ast_type == AST_TYPE.ASSIGN and not isinstance(node.left, VariableNode) and not isinstance(node.left, FunctionNode): # TODO function declaration

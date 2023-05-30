@@ -8,43 +8,36 @@ class Computor:
 
     def assign(self, left, right):
         if isinstance(left, Polynomial):
-            if isinstance(right, Polynomial):
-                right = right.substitute(self.vars)
-
             if isinstance(right, Function):
                 right = self.funcs[right.name](right.arg)
-            print(right, type(right))
             # if not isinstance(right, Rational) and not isinstance(right, Complex) and not isinstance(right, Matrix):
             #     raise TypeError("Cannot assign a polynomial or a function to a variable")
             if not left.coeffs == [0, 1]:
                 raise TypeError("Wrong variable format")
             self.vars[left.variable] = right
+            if left.variable in self.funcs:
+                del self.funcs[left.variable]
         elif isinstance(left, Function):
             if isinstance(right, Function):
                 raise TypeError("Cannot assign a function to another function")
             if isinstance(right, Polynomial) and right.variable != left.arg.variable and right.variable not in self.vars:
                 raise TypeError("Cannot assign a polynomial to a function with a different variable")
-            # left.arg.variable = ""
-            # right.variable = ""
-            left.polynomials = right
-            self.funcs[left.name] = left
+            self.funcs[left.name] = Function(left.name, left.arg, right)
+            if left.name in self.vars:
+                del self.vars[left.name]
         else:
             raise ValueError(f"Unexpected node type: {type(left)}")
         return right
 
     def compute_val(self, left):
         if isinstance(left, Polynomial):
-            left.substitute(self.vars)
             if left.variable not in self.vars:
                 raise ValueError(f"Variable {left.variable} is not defined")
             return left(self.vars[left.variable])
 
         elif isinstance(left, Function): # TODO chain of functions, variable in function ...
             if left.name in self.funcs:
-                res = self.funcs[left.name](left.arg)
-                if isinstance(res, Polynomial):
-                    res.substitute(self.vars)
-                return res
+                return self.funcs[left.name](left.arg)
             raise ValueError(f"Function {left.name} is not defined")
 
         else:
@@ -58,12 +51,6 @@ class Computor:
             if not left.name in self.funcs:
                 raise ValueError(f"Function {left.name} is not defined")
             left = self.funcs[left.name](left.arg)
-            left.substitute(self.vars)
-
-        if isinstance(left, Polynomial):
-            left = left.substitute(self.vars)
-        if isinstance(right, Polynomial):
-            right = right.substitute(self.vars)
 
         if not isinstance(left, Polynomial):
             left = Polynomial([left])
@@ -123,3 +110,5 @@ class Computor:
 
     def __str__(self):
         return f"vars: {self.vars}\nfuncs: {[x.__str__() for x in list(self.funcs.values())]}"
+
+computor = Computor()

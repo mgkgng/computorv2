@@ -1,5 +1,5 @@
 class Function:
-    def __init__(self, name, arg, polynomials):
+    def __init__(self, name, arg, polynomials=None):
         self.name = name
         self.arg = arg
         self.polynomials = polynomials
@@ -11,11 +11,7 @@ class Function:
         return f"{self.name}({self.arg}) = {self.polynomials.__str__()}"
 
     def __add__(self, other):
-        if isinstance(self.arg, str):
-            raise TypeError("Cannot add to a function declaration")
         return self.__call__(self.arg) + other
 
     def __radd__(self, other):
-        if isinstance(self.arg, str):
-            raise TypeError("Cannot add to a function declaration")
         return self.__call__(self.arg) + other

@@ -1,5 +1,8 @@
 from .function import Function
 from .rational import Rational
+import matplotlib.pyplot as plt
+import numpy as np
+from functools import reduce
 
 class Polynomial:
     def __init__(self, coeffs, variable=None):
@@ -44,11 +47,7 @@ class Polynomial:
     def __add__(self, other):
         if isinstance(other, Polynomial):
             if self.variable != other.variable:
-                # if variables are different, I will treat them as constants
-                coeffs1 = self.coeffs
-                coeffs1[0] = coeffs1[0] + other
-                return Polynomial(coeffs1, self.variable)
-
+                raise ValueError("Polynomials should have the same variable")
             deg = max(len(self.coeffs), len(other.coeffs))
             res = [0] * deg
             i = 0
@@ -58,12 +57,13 @@ class Polynomial:
             while i < len(other.coeffs):
                 res[i] = other.coeffs[i]
                 i += 1
-
-            return Polynomial(res, self.variable)
+            return Polynomial(res, self.variable)  
         elif isinstance(other, Function):
             raise TypeError("Cannot add a polynomial to a function")
         else:
-            return self + Polynomial([other])
+            new_coeffs = self.coeffs.copy()
+            new_coeffs[0] = new_coeffs[0] + other
+            return Polynomial(new_coeffs, self.variable)
 
     def __radd__(self, other):
         return self + other
@@ -99,6 +99,8 @@ class Polynomial:
         return self * other
 
     def __call__(self, x):
+        if isinstance(x, Polynomial):
+            raise TypeError("Cannot call a polynomial with a polynomial")
         return sum([coef * x ** i for i, coef in enumerate(self.coeffs)])
     
     def __pow__(self, power):
@@ -122,22 +124,18 @@ class Polynomial:
     def modify_var(self, new_var):
         self.variable = new_var
 
-    def substitute(self, vars):
-        for i in range(len(self.coeffs)):
-            print('cic', type(self.coeffs[i]))
-            if isinstance(self.coeffs[i], Polynomial):
-                self.coeffs[i] = self.coeffs[i].substitute(vars)
-        
-        if self.variable in vars:
-            constant = self.coeffs[0]
-            substituted = sum([self.coeffs[i] * vars[self.variable] ** i for i in range(1, len(self.coeffs))])
-            res = constant + substituted
-            if isinstance(res, Polynomial):
-                return res.substitute(vars)
-            return res
+    def plot(self):
+        x = np.linspace(-10, 10, 100)
+        apply_func = np.vectorize(lambda x: reduce(lambda sum, coeff : sum + coeff[1] * (x ** coeff[0]), enumerate(self.coeffs), 0))
+        y = apply_func(x)
 
-        for i in range(len(self.coeffs)):
-            if isinstance(self.coeffs[i], Polynomial) and self.coeffs[i].variable and not self.coeffs[i].variable in vars:
-                print(self.coeffs[i], self.coeffs[i].variable, vars)
-                raise ValueError("Polynomial with multiple variables cannot be evaluated")
-        return self
+        plt.axhline(0, color='black')  # Add horizontal x-axis at y=0
+        plt.axvline(0, color='black')  # Add vertical y-axis at x=0
+        plt.xlabel('x')
+        plt.ylabel('f(x)')
+        plt.plot(x, y)
+        plt.grid(True)
+        plt.show()
+
+    def __float__(self):
+        return float(self.coeffs[0])
