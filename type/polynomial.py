@@ -20,6 +20,8 @@ class Polynomial:
     def __str__(self):
         if len(self.coeffs) == 1 and self.coeffs[0] == 0:
             return "0"
+
+        variable = self.variable if self.variable else "x"
         
         terms = []
         for i, coef in enumerate(self.coeffs):
@@ -28,7 +30,7 @@ class Polynomial:
             
             term = str(coef) if i == 0 or ((isinstance(coef, int) or isinstance(coef, Rational)) and abs(coef) != 1) else "-" if (isinstance(coef, int) or isinstance(coef, Rational)) and coef < 0 else ""
             if i > 0:
-                term += self.variable
+                term += variable
                 if i > 1:
                     term += f"^{i}"
             

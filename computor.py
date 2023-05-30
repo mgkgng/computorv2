@@ -11,8 +11,11 @@ class Computor:
             if isinstance(right, Polynomial):
                 right = right.substitute(self.vars)
 
-            if not isinstance(right, Rational) and not isinstance(right, Complex) and not isinstance(right, Matrix):
-                raise TypeError("Cannot assign a polynomial or a function to a variable")
+            if isinstance(right, Function):
+                right = self.funcs[right.name](right.arg)
+            print(right, type(right))
+            # if not isinstance(right, Rational) and not isinstance(right, Complex) and not isinstance(right, Matrix):
+            #     raise TypeError("Cannot assign a polynomial or a function to a variable")
             if not left.coeffs == [0, 1]:
                 raise TypeError("Wrong variable format")
             self.vars[left.variable] = right
@@ -21,7 +24,10 @@ class Computor:
                 raise TypeError("Cannot assign a function to another function")
             if isinstance(right, Polynomial) and right.variable != left.arg.variable and right.variable not in self.vars:
                 raise TypeError("Cannot assign a polynomial to a function with a different variable")
-            self.funcs[left.name] = right
+            # left.arg.variable = ""
+            # right.variable = ""
+            left.polynomials = right
+            self.funcs[left.name] = left
         else:
             raise ValueError(f"Unexpected node type: {type(left)}")
         return right
@@ -36,9 +42,7 @@ class Computor:
         elif isinstance(left, Function): # TODO chain of functions, variable in function ...
             if left.name in self.funcs:
                 res = self.funcs[left.name](left.arg)
-                print('bambam ici', type(res))
                 if isinstance(res, Polynomial):
-                    print('coucou ici', res.variable)
                     res.substitute(self.vars)
                 return res
             raise ValueError(f"Function {left.name} is not defined")
@@ -118,4 +122,4 @@ class Computor:
             print(root)
 
     def __str__(self):
-        return f"vars: {self.vars}\nfuncs: {self.funcs}"
+        return f"vars: {self.vars}\nfuncs: {[x.__str__() for x in list(self.funcs.values())]}"

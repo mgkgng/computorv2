@@ -10,16 +10,25 @@ if __name__ == "__main__":
     computor = Computor()
     lexer = Lexer()
     parser = Parser()
+    debug = False
     while True:
         try:
             s = input(">>> ")
             readline.add_history(s)
+            if s == "DEBUG_ON":
+                debug = True
+                continue
+            elif s == "DEBUG_OFF":
+                debug = False
+                continue
             tokens = lexer.run(s)
-            print_tokens(tokens)
-            print('parser begins')
+            if debug:
+                print_tokens(tokens)
+                print('parser begins')
             ast = parser.run(tokens)
-            print(ast)
-            print('interpreter begins')
+            if debug:
+                print(ast)
+                print('interpreter begins')
             interpreter = Interpreter(ast.root, ast.type)
             left, right = interpreter.run()
             print('computor begins')
@@ -29,6 +38,7 @@ if __name__ == "__main__":
                 res = computor.compute_val(left)
             elif ast.type == AST_TYPE.COMPUTE_SOL:
                 res = computor.compute_sol(left, right)
+            # TODO1 : if fraction, print float value
             print(res)
             print(computor)
         except KeyboardInterrupt:

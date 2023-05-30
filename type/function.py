@@ -1,40 +1,21 @@
 class Function:
-    def __init__(self, name, arg):
+    def __init__(self, name, arg, polynomials):
         self.name = name
         self.arg = arg
+        self.polynomials = polynomials
 
-    def __add__(self):
-        raise TypeError("Cannot add to a function")
+    def __call__(self, x):
+        return self.polynomials(x)
 
-    def __radd__(self):
-        raise TypeError("Cannot add to a function")
+    def __str__(self):
+        return f"{self.name}({self.arg}) = {self.polynomials.__str__()}"
 
-    def __sub__(self):
-        raise TypeError("Cannot subtract from a function")
+    def __add__(self, other):
+        if isinstance(self.arg, str):
+            raise TypeError("Cannot add to a function declaration")
+        return self.__call__(self.arg) + other
 
-    def __rsub__(self):
-        raise TypeError("Cannot subtract from a function")
-
-    def __mul__(self):
-        raise TypeError("Cannot multiply a function")
-
-    def __rmul__(self):
-        raise TypeError("Cannot multiply a function")
-
-    def __truediv__(self):
-        raise TypeError("Cannot divide a function")
-
-    def __rtruediv__(self):
-        raise TypeError("Cannot divide a function")
-
-    def __pow__(self):
-        raise TypeError("Cannot raise a function to a power")
-
-    def __rpow__(self):
-        raise TypeError("Cannot raise a function to a power")
-
-    def __mod__(self):
-        raise TypeError("Cannot mod a function")
-
-    def __rmod__(self):
-        raise TypeError("Cannot mod a function")
+    def __radd__(self, other):
+        if isinstance(self.arg, str):
+            raise TypeError("Cannot add to a function declaration")
+        return self.__call__(self.arg) + other
