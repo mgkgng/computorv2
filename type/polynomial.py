@@ -125,7 +125,7 @@ class Polynomial:
         self.variable = new_var
 
     def plot(self):
-        x = np.linspace(-10, 10, 100)
+        x = np.linspace(-15, 15, 100)
         apply_func = np.vectorize(lambda x: reduce(lambda sum, coeff : sum + coeff[1] * (x ** coeff[0]), enumerate(self.coeffs), 0))
         y = apply_func(x)
 
@@ -133,6 +133,7 @@ class Polynomial:
         plt.axvline(0, color='black')  # Add vertical y-axis at x=0
         plt.xlabel('x')
         plt.ylabel('f(x)')
+        plt.xlim(-15, 15)
         plt.plot(x, y)
         plt.grid(True)
         plt.show()

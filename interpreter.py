@@ -48,9 +48,6 @@ class Interpreter:
         left = self.visit(node.left)
         right = self.visit(node.right)
 
-        print('type: ', type(left), type(right))
-        print('operator:', node.op)
-
         if node.op == '+':
             return left + right
         elif node.op == '-':
@@ -82,7 +79,7 @@ class Interpreter:
         return Complex(0, 1)
 
     def visit_variable(self, node):
-        if node.name in computor.vars:
+        if node.name in computor.vars and self.ast_type != AST_TYPE.ASSIGN:
             return computor.vars[node.name]
         return Polynomial([0, 1], node.name)
 

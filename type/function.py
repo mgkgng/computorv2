@@ -15,3 +15,6 @@ class Function:
 
     def __radd__(self, other):
         return self.__call__(self.arg) + other
+
+    def plot(self):
+        return self.polynomials.plot()

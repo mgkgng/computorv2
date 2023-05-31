@@ -58,10 +58,8 @@ class Parser:
     def parse_expression(self):
         left = self.parse_term()
         while self.peek() is not None and self.peek().type == TokenType.OPERATOR and self.peek().value in "+-":
-            print('expression: ', self.peek())
             operator_token = self.peek()
             self.consume()
-            print('expression: ', self.peek())
             right = self.parse_term()
             left = BinaryOperator(left, operator_token.value, right)
         return left
@@ -70,7 +68,6 @@ class Parser:
         left_factor = self.parse_exponent()
 
         while self.peek() is not None and self.peek().type == TokenType.OPERATOR and self.peek().value in ['*', '/', '^', '%', '**']:
-            print("term: ", self.peek())
             op = self.peek_and_consume()
             right_factor = self.parse_exponent()
             left_factor = BinaryOperator(left_factor, op.value, right_factor)
@@ -79,7 +76,6 @@ class Parser:
     def parse_exponent(self):
         base = self.parse_factor()
         if self.peek() is not None and self.peek().type == TokenType.OPERATOR and self.peek().value == '^':
-            print("exponent: ", self.peek())
             self.consume()
             self.rejects([TokenType.OPERATOR, TokenType.FUNCTION, TokenType.MATRIX_OPEN])
             exponent = self.parse_factor()
@@ -88,7 +84,6 @@ class Parser:
 
     def parse_factor(self):
         token = self.peek()
-        print("factor: ", token)
 
         if token.type == TokenType.OPERATOR and token.value in '+-':
             self.consume()

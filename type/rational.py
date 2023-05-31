@@ -9,9 +9,6 @@ class Rational:
         if denominator == 0:
             raise ValueError("Denominator cannot be 0")
 
-        print(numerator, denominator)
-        print(type(numerator), type(denominator))
-
         common_divisor = math.gcd(numerator, denominator)
         self.numerator = numerator // common_divisor
         self.denominator = denominator // common_divisor

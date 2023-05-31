@@ -16,7 +16,6 @@ class Complex:
         if isinstance(other, Complex):
             return Complex(self.real + other.real, self.imaginary + other.imaginary)
         elif isinstance(other, Rational):
-            print('was it here???')
             return Complex(self.real + other.numerator / other.denominator, self.imaginary)
         else:
             return other + self

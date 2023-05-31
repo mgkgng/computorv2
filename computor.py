@@ -1,4 +1,5 @@
 from type import Polynomial, Rational, Complex, Matrix, Function
+from globals import built_in_funcs
 import numpy as np
 
 class Computor:
@@ -8,20 +9,24 @@ class Computor:
 
     def assign(self, left, right):
         if isinstance(left, Polynomial):
-            if isinstance(right, Function):
-                right = self.funcs[right.name](right.arg)
-            # if not isinstance(right, Rational) and not isinstance(right, Complex) and not isinstance(right, Matrix):
-            #     raise TypeError("Cannot assign a polynomial or a function to a variable")
-            if not left.coeffs == [0, 1]:
-                raise TypeError("Wrong variable format")
+            if not isinstance(right, Rational) and not isinstance(right, Complex) and not isinstance(right, Matrix):
+                raise TypeError("Cannot assign a polynomial or a function to a variable")
+            if left.variable in built_in_funcs:
+                raise TypeError("Wrong variable name: there is a built-in function with this name")
             self.vars[left.variable] = right
             if left.variable in self.funcs:
                 del self.funcs[left.variable]
         elif isinstance(left, Function):
             if isinstance(right, Function):
                 raise TypeError("Cannot assign a function to another function")
-            if isinstance(right, Polynomial) and right.variable != left.arg.variable and right.variable not in self.vars:
+            if left.name in built_in_funcs:
+                raise TypeError("Wrong variable name: there is a built-in function with this name")
+            if left.arg.coeffs != [0, 1]:
+                raise TypeError("Wrong format for function assignment")
+            if isinstance(right, Polynomial) and right.variable != left.arg.variable:
                 raise TypeError("Cannot assign a polynomial to a function with a different variable")
+            if not isinstance(right, Polynomial):
+                right = Polynomial([right])
             self.funcs[left.name] = Function(left.name, left.arg, right)
             if left.name in self.vars:
                 del self.vars[left.name]

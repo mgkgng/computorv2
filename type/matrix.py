@@ -29,7 +29,7 @@ class Matrix:
         if self.shape != other.shape:
             raise ValueError("Matrices should have the same shape")
 
-        result = [[self.elements[i][j] + other.elements[i][j] for j in range(self.num_cols)] for i in range(self.num_rows)]
+        result = [[self.elements[i][j] + other.elements[i][j] for j in range(self.shape[1])] for i in range(self.shape[0])]
         return Matrix(result)
 
     def __sub__(self, other):
@@ -38,25 +38,25 @@ class Matrix:
         if self.shape != other.shape:
             raise ValueError("Matrices should have the same shape")
 
-        result = [[self.elements[i][j] - other.elements[i][j] for j in range(self.num_cols)] for i in range(self.num_rows)]
+        result = [[self.elements[i][j] - other.elements[i][j] for j in range(self.shape[1])] for i in range(self.shape[0])]
         return Matrix(result)
 
     # Scalar multiplication
     def __mul__(self, other):
         if not isinstance(other, Rational) and not isinstance(other, Complex):
             raise TypeError("Second operand should be of Rational or Complex type")
-        result = [[other * self.elements[i][j] for j in range(self.num_cols)] for i in range(self.num_rows)]
+        result = [[other * self.elements[i][j] for j in range(self.shape[1])] for i in range(self.shape[0])]
         return Matrix(result)
 
     # Scalar division
     def __truediv__(self, other):
         if not isinstance(other, Rational) and not isinstance(other, Complex):
             raise TypeError("Second operand should be of Rational or Complex type")
-        result = [[self.elements[i][j] / other for j in range(self.num_cols)] for i in range(self.num_rows)]
+        result = [[self.elements[i][j] / other for j in range(self.shape[1])] for i in range(self.shape[0])]
         return Matrix(result)
 
     def transpose(self):
-        transposed_elements = [[self.elements[j][i] for j in range(self.num_rows)] for i in range(self.num_cols)]
+        transposed_elements = [[self.elements[j][i] for j in range(self.shape[0])] for i in range(self.shape[1])]
         return Matrix(transposed_elements)
 
     @staticmethod
@@ -70,5 +70,5 @@ class Matrix:
         if self.shape[1] != other.shape[0]:
             raise ValueError("The number of columns of the first matrix should be equal to the number of rows of the second matrix")
 
-        result = [[sum(self.elements[i][k] * other.elements[k][j] for k in range(self.num_cols)) for j in range(other.num_cols)] for i in range(self.num_rows)]
+        result = [[sum(self.elements[i][k] * other.elements[k][j] for k in range(self.shape[1])) for j in range(other.shape[1])] for i in range(self.shape[0])]
         return Matrix(result)

@@ -9,13 +9,25 @@ if __name__ == "__main__":
     lexer = Lexer()
     parser = Parser()
     debug = False
+    print("Please put your input here. Type 'HELP' to see the usage and 'EXIT' to exit.")
     while True:
         try:
-            print("Please put your input here. Type 'HELP' to see the usage.")
             s = input(">>> ")
+            if s == 'EXIT':
+                break
             if s == 'HELP':
-                print('usage TODO')
-                print()
+                print('''usage:
+    Assignment: <variable> = <expression>
+    Computation: <expression> = ?
+    Solve: <expression> = <expression> ? (supported only for polynomials of degree <= 3)
+                
+    Special commands:
+        HELP: show help
+        VARS: show variables
+        FUNCS: show functions
+        PLOT <function name>: plot function
+        DEBUG_ON: turn on debug mode
+        DEBUG_OFF: turn off debug mode''')
                 continue
             if s == 'VARS':
                 computor.print_vars()
@@ -25,7 +37,7 @@ if __name__ == "__main__":
                 continue
             if s.startswith('PLOT '):
                 args = s.split(' ')
-                if len(args) != 2:
+                if len(args) != 2 or not len(args[1]):
                     print("Usage: PLOT <function name>")
                     continue
                 if args[1] in computor.funcs:
@@ -50,7 +62,6 @@ if __name__ == "__main__":
                 print('interpreter begins')
             interpreter = Interpreter(ast.root, ast.type)
             left, right = interpreter.run()
-            print('computor begins')
             if ast.type == AST_TYPE.ASSIGN:
                 res = computor.assign(left, right)
             elif ast.type == AST_TYPE.COMPUTE_VAL:
@@ -59,7 +70,6 @@ if __name__ == "__main__":
                 res = computor.compute_sol(left, right)
             # TODO1 : if fraction, print float value
             print(res)
-            print(computor)
         except KeyboardInterrupt:
             print("\nKeyboardInterrupt")
             break
