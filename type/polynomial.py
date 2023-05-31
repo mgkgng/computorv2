@@ -13,7 +13,6 @@ class Polynomial:
         self.coeffs = coeffs
         self.variable = variable
         self.degree = len(coeffs) - 1
-        self.divisor = divisor
 
     def __pos__(self):
         return self
@@ -99,6 +98,20 @@ class Polynomial:
     def __rmul__(self, other):
         return self * other
 
+    def __truediv__(self, other):
+        if isinstance(other, int) or isinstance(other,float) or isinstance(other, Rational):
+            return Polynomial([coef / other for coef in self.coeffs], self.variable)
+        if isinstance(other, Polynomial) or isinstance(other, PolynomialWrapper):
+            if self.variable != other.variable :
+                raise ValueError("Polynomials should have the same variable")
+            return PolynomialWrapper(self, other, self.variable)
+        raise TypeError("Cannot divide a polynomial by this type")
+
+    def __rtruediv__(self, other):
+        if isinstance(other, int) or isinstance(other, float) or isinstance(other, Rational):
+            return PolynomialWrapper(other, self, self.variable)
+        raise TypeError("Cannot divide this type by a polynomial")
+
     def __call__(self, x):
         # if isinstance(x, Polynomial):
         #     raise TypeError("Cannot call a polynomial with a polynomial")
@@ -141,3 +154,85 @@ class Polynomial:
 
     def __float__(self):
         return float(self.coeffs[0])
+
+class PolynomialWrapper:
+    def __init__(self, dividend, divisor, variable):
+        self.dividend = dividend
+        self.divisor = divisor
+        self.variable = variable
+
+    def __str__(self):
+        return f"{self.dividend} / {self.divisor}"
+    
+    def __repr__(self):
+        return self.__str__()
+    
+    def __call__(self, x):
+
+        return self.dividend(x) if isinstance(self.dividend, Polynomial) else self.dividend / self.divisor(x)
+    
+    def __add__(self, other):
+        if isinstance(other, int) or isinstance(other, Rational):
+            return PolynomialWrapper(self.dividend + other * self.divisor, self.divisor, self.variable)
+        if isinstance(other, Polynomial):
+            if self.variable != other.variable:
+                raise ValueError("Polynomials should have the same variable")
+            return PolynomialWrapper(self.dividend + other * self.divisor, self.divisor, self.variable)
+        else:
+            raise TypeError("Operation too complex")
+    
+    def __radd__(self, other):
+        return self + other
+    
+    def __sub__(self, other):
+        return self + (-other)
+    
+    def __rsub__(self, other):
+        return (-self) + other
+    
+    def __mul__(self, other):
+        if isinstance(other, int) or isinstance(other, Rational):
+            return PolynomialWrapper(self.dividend * other, self.divisor, self.variable)
+        if isinstance(other, Polynomial):
+            if self.variable != other.variable:
+                raise ValueError("Polynomials should have the same variable")
+            return PolynomialWrapper(self.dividend * other, self.divisor, self.variable)
+        else:
+            raise TypeError("Operation too complex")
+        
+    def __rmul__(self, other):
+        return self * other
+    
+    def __truediv__(self, other):
+        if isinstance(other, int) or isinstance(other, Rational):
+            return PolynomialWrapper(self.dividend, self.divisor * other, self.variable)
+        if isinstance(other, Polynomial):
+            if self.variable != other.variable:
+                raise ValueError("Polynomials should have the same variable")
+            return PolynomialWrapper(self.dividend, self.divisor * other, self.variable)
+        else:
+            raise TypeError("Operation too complex")
+    
+    def __rtruediv__(self, other):
+        if isinstance(other, int) or isinstance(other, Rational):
+            return PolynomialWrapper(self.divisor * other, self.dividend, self.variable)
+        if isinstance(other, Polynomial):
+            if self.variable != other.variable:
+                raise ValueError("Polynomials should have the same variable")
+            return PolynomialWrapper(self.divisor * other, self.dividend, self.variable)
+        else:
+            raise TypeError("Operation too complex")
+    
+    def plot(self):
+        x = np.linspace(-15, 15, 100)
+        apply_func = np.vectorize(lambda x: self(x))
+        y = apply_func(x)
+
+        plt.axhline(0, color='black')
+        plt.axvline(0, color='black')  # Add vertical y-axis at x=0
+        plt.xlabel('x')
+        plt.ylabel('f(x)')
+        plt.xlim(-15, 15)
+        plt.plot(x, y)
+        plt.grid(True)
+        plt.show()

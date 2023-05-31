@@ -1,4 +1,4 @@
-from type import Polynomial, Rational, Complex, Matrix, Function
+from type import Polynomial, PolynomialWrapper, Rational, Complex, Matrix, Function
 import numpy as np
 
 class Computor:
@@ -18,9 +18,9 @@ class Computor:
                 raise TypeError("Cannot assign a function to another function")
             if left.arg.coeffs != [0, 1]:
                 raise TypeError("Wrong format for function assignment")
-            if isinstance(right, Polynomial) and right.variable != left.arg.variable:
+            if (isinstance(right, Polynomial) or isinstance(right, PolynomialWrapper)) and right.variable != left.arg.variable:
                 raise TypeError("Cannot assign a polynomial to a function with a different variable")
-            if not isinstance(right, Polynomial):
+            if not (isinstance(right, Polynomial) or isinstance(right, PolynomialWrapper)):
                 right = Polynomial([right])
             self.funcs[left.name] = Function(left.name, left.arg, right)
             if left.name in self.vars:

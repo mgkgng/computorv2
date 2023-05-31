@@ -69,7 +69,7 @@ class Rational:
             denominator = self.denominator * other.numerator
             return Rational(numerator, denominator)
         else:
-            return other ** -1 * self
+            return other.__rtruediv__(self)
     
     def __str__(self):
         if self.denominator == 1:
