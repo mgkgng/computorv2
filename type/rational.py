@@ -9,7 +9,9 @@ class Rational:
         if denominator == 0:
             raise ValueError("Denominator cannot be 0")
 
-        common_divisor = math.gcd(numerator, denominator)
+        ratio = numerator / denominator
+        fraction = Fraction(ratio)
+        common_divisor = math.gcd(fraction.numerator, fraction.denominator)
         self.numerator = numerator // common_divisor
         self.denominator = denominator // common_divisor
 
@@ -64,12 +66,20 @@ class Rational:
         if isinstance(other, Rational):
             if other.numerator == 0:
                 raise ZeroDivisionError("Division by zero")
-
             numerator = self.numerator * other.denominator
             denominator = self.denominator * other.numerator
             return Rational(numerator, denominator)
+        elif isinstance(other, int) or isinstance(other, float):
+            if other == 0:
+                raise ZeroDivisionError("Division by zero")
+            return Rational(self.numerator, self.denominator * other)
         else:
             return other.__rtruediv__(self)
+
+    def __rtruediv__(self, other):
+        if self.numerator == 0:
+            raise ZeroDivisionError("Division by zero")
+        return Rational(self.denominator * other, self.numerator)
     
     def __str__(self):
         if self.denominator == 1:
@@ -80,6 +90,8 @@ class Rational:
         return self.__str__()
 
     def to_float(self):
+        if self.denominator == 0:
+            return float("inf")
         res = float(self.numerator) / float(self.denominator)
         return int(res) if res.is_integer() else res
 

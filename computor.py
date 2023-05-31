@@ -111,7 +111,7 @@ class Computor:
 
     def print_funcs(self):
         for func in self.funcs.values():
-            poly = func.polynomial
+            poly = func.polynomials
             poly.variable = 'x'
             print(f"{func.name}(x): {poly}")
 
