@@ -1,6 +1,6 @@
 from computor import computor
 from parser import AST_TYPE
-from parser import Number, BinaryOperator, UnaryOperator, FunctionNode, VariableNode, MatrixNode, Equation, MatrixRow, Factorial
+from parser import Number, BinaryOperator, UnaryOperator, FunctionNode, VariableNode, MatrixNode, Equation, MatrixRow
 from type import Complex, Rational, Matrix, Polynomial, Function
 from fractions import Fraction
 from decimal import Decimal
@@ -13,23 +13,22 @@ class Interpreter:
     def run(self):
         return self.visit(self.root)
 
-    def visit(self, node):
+    def visit(self, node, on_left=None):
+        # print(f"Visiting {type(node)}, left: {on_left}")
         if isinstance(node, Number):
             return self.visit_number(node)
         elif isinstance(node, UnaryOperator):
-            return self.visit_unary_operator(node)
+            return self.visit_unary_operator(node, on_left)
         elif isinstance(node, BinaryOperator):
-            return self.visit_binary_operator(node)
+            return self.visit_binary_operator(node, on_left)
         elif isinstance(node, VariableNode):
-            return self.visit_variable(node)
+            return self.visit_variable(node, on_left)
         elif isinstance(node, FunctionNode):
-            return self.visit_function(node)
+            return self.visit_function(node, on_left)
         elif isinstance(node, MatrixNode):
-            return self.visit_matrix(node)
+            return self.visit_matrix(node, on_left)
         elif isinstance(node, Equation):
             return self.visit_equation(node)
-        elif isinstance(node, Factorial):
-            return self.visit_factorial(node)
         else:
             raise ValueError(f"Unexpected node type: {type(node)}")
 
@@ -40,13 +39,13 @@ class Interpreter:
             return Rational(fraction.numerator, fraction.denominator)
         return Complex(0, node.value)
 
-    def visit_unary_operator(self, node):
-        operand = self.visit(node.operand)
+    def visit_unary_operator(self, node, on_left=None):
+        operand = self.visit(node.operand, on_left)
         return -operand if node.op == "-" else operand
 
-    def visit_binary_operator(self, node):
-        left = self.visit(node.left)
-        right = self.visit(node.right)
+    def visit_binary_operator(self, node, on_left=None):
+        left = self.visit(node.left, on_left)
+        right = self.visit(node.right, on_left)
 
         if node.op == '+':
             return left + right
@@ -75,37 +74,31 @@ class Interpreter:
         else:
             raise ValueError(f"Unknown operator: {node.op}")            
 
-    def visit_imaginary(self, node):
-        return Complex(0, 1)
-
-    def visit_variable(self, node):
-        if node.name in computor.vars and self.ast_type != AST_TYPE.ASSIGN:
+    def visit_variable(self, node, on_left=None):
+        if node.name in computor.vars and (self.ast_type != AST_TYPE.ASSIGN or on_left is False):
             return computor.vars[node.name]
         return Polynomial([0, 1], node.name)
 
-    def visit_function(self, node):
-        arg = self.visit(node.arg)
-        if node.name in computor.funcs and self.ast_type != AST_TYPE.ASSIGN:
-            res = computor.funcs[node.name](arg)
-            print("TRYING TRYING TRYING", res, type(res))
+    def visit_function(self, node, on_left=None):
+        arg = self.visit(node.arg, on_left)
+        if node.name in computor.funcs and (self.ast_type != AST_TYPE.ASSIGN or on_left is False):
             return computor.funcs[node.name](arg)
+        if self.ast_type == AST_TYPE.ASSIGN:
+            if not isinstance(arg, Polynomial):
+                raise ValueError("The left side of the equation must declare a variable when it is an assignment")
+            if node.name == arg.variable:
+                raise ValueError("Function name and variable name cannot be the same")
         return Function(node.name, arg)
 
-    def visit_matrix(self, node):
+    def visit_matrix(self, node, on_left=None):
         rows = []
         for row in node.rows:
-            rows.append([self.visit(element) for element in row.elems])
+            rows.append([self.visit(element, on_left) for element in row.elems])
         return Matrix(rows)
     
-    def visit_factorial(self, node):
-        # TODO: check if the operand is an integer
-        # TODO2: deal with polynomial
-        operand = self.visit(node.operand)
-        return operand.factorial()
-
     def visit_equation(self, node):
         if self.ast_type == AST_TYPE.ASSIGN and not isinstance(node.left, VariableNode) and not isinstance(node.left, FunctionNode): # TODO function declaration
             raise ValueError("The left side of the equation must declare a variable or function when it is an assignment")
-        left = self.visit(node.left)
-        right = self.visit(node.right) if self.ast_type != AST_TYPE.COMPUTE_VAL else None
+        left = self.visit(node.left, True)
+        right = self.visit(node.right, False) if self.ast_type != AST_TYPE.COMPUTE_VAL else None
         return left, right

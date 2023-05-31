@@ -91,12 +91,3 @@ class MatrixRow(Expression):
         for elem in self.elems:
             ret += elem.__str__(level + 1)
         return ret
-
-class Factorial(Expression):
-    def __init__(self, operand):
-        self.operand = operand
-    
-    def __str__(self, level=0):
-        ret = "\t"*level + "Factorial:\n"
-        ret += self.operand.__str__(level + 1)
-        return ret

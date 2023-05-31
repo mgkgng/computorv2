@@ -74,8 +74,7 @@ class Rational:
     def __str__(self):
         if self.denominator == 1:
             return str(self.numerator)
-        else:
-            return f"{self.numerator}/{self.denominator}"
+        return str(self.to_float())
 
     def __repr__(self):
         return self.__str__()

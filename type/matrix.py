@@ -41,23 +41,17 @@ class Matrix:
         result = [[self.elements[i][j] - other.elements[i][j] for j in range(self.shape[1])] for i in range(self.shape[0])]
         return Matrix(result)
 
-    # Scalar multiplication
     def __mul__(self, other):
         if not isinstance(other, Rational) and not isinstance(other, Complex):
-            raise TypeError("Second operand should be of Rational or Complex type")
+            raise TypeError("Only scalar multiplication is supported")
         result = [[other * self.elements[i][j] for j in range(self.shape[1])] for i in range(self.shape[0])]
         return Matrix(result)
 
-    # Scalar division
     def __truediv__(self, other):
         if not isinstance(other, Rational) and not isinstance(other, Complex):
-            raise TypeError("Second operand should be of Rational or Complex type")
+            raise TypeError("Only scalar division is supported")
         result = [[self.elements[i][j] / other for j in range(self.shape[1])] for i in range(self.shape[0])]
         return Matrix(result)
-
-    def transpose(self):
-        transposed_elements = [[self.elements[j][i] for j in range(self.shape[0])] for i in range(self.shape[1])]
-        return Matrix(transposed_elements)
 
     @staticmethod
     def identity(n):

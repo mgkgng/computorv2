@@ -25,9 +25,7 @@ if __name__ == "__main__":
         HELP: show help
         VARS: show variables
         FUNCS: show functions
-        PLOT <function name>: plot function
-        DEBUG_ON: turn on debug mode
-        DEBUG_OFF: turn off debug mode''')
+        PLOT <function name>: plot function''')
                 continue
             if s == 'VARS':
                 computor.print_vars()
@@ -68,8 +66,8 @@ if __name__ == "__main__":
                 res = computor.compute_val(left)
             elif ast.type == AST_TYPE.COMPUTE_SOL:
                 res = computor.compute_sol(left, right)
-            # TODO1 : if fraction, print float value
-            print(res)
+            if res:
+                print(res)
         except KeyboardInterrupt:
             print("\nKeyboardInterrupt")
             break

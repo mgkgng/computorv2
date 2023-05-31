@@ -51,9 +51,6 @@ class Lexer:
             elif c == '=':
                 tokens.append(Token(TokenType.EQUAL, c))
                 self.pos += 1
-            elif c == '!':
-                tokens.append(Token(TokenType.FACTORIAL, c))
-                self.pos += 1
             else:
                 raise Exception("Invalid character", c)
         return tokens

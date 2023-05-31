@@ -5,7 +5,7 @@ import numpy as np
 from functools import reduce
 
 class Polynomial:
-    def __init__(self, coeffs, variable=None):
+    def __init__(self, coeffs, variable=None, divisor=None):
         if not coeffs or not isinstance(coeffs, list) or len(coeffs) == 0:
             raise ValueError("Polynomial coefficients should be a non-empty list")
         
@@ -13,6 +13,7 @@ class Polynomial:
         self.coeffs = coeffs
         self.variable = variable
         self.degree = len(coeffs) - 1
+        self.divisor = divisor
 
     def __pos__(self):
         return self
@@ -99,8 +100,8 @@ class Polynomial:
         return self * other
 
     def __call__(self, x):
-        if isinstance(x, Polynomial):
-            raise TypeError("Cannot call a polynomial with a polynomial")
+        # if isinstance(x, Polynomial):
+        #     raise TypeError("Cannot call a polynomial with a polynomial")
         return sum([coef * x ** i for i, coef in enumerate(self.coeffs)])
     
     def __pow__(self, power):

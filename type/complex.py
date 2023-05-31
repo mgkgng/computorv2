@@ -17,8 +17,7 @@ class Complex:
             return Complex(self.real + other.real, self.imaginary + other.imaginary)
         elif isinstance(other, Rational):
             return Complex(self.real + other.numerator / other.denominator, self.imaginary)
-        else:
-            return other + self
+        return other + self
 
     def __radd__(self, other):
         if isinstance(other, int) or isinstance(other, float):
