@@ -66,7 +66,7 @@ if __name__ == "__main__":
                 res = computor.compute_val(left)
             elif ast.type == AST_TYPE.COMPUTE_SOL:
                 res = computor.compute_sol(left, right)
-            if res:
+            if res is not None:
                 print(res)
         except KeyboardInterrupt:
             print("\nKeyboardInterrupt")

@@ -134,6 +134,24 @@ class Polynomial:
             res *= self
 
         return res
+    
+    def __mod__(self, other):
+        if isinstance(other, int) or (isinstance(other, Rational) and other.denominator == 1):
+            return ModuloWrapper(self, other, self.variable)
+        if isinstance(other, Polynomial):
+            if self.variable != other.variable:
+                raise ValueError("Polynomials should have the same variable")
+            return ModuloWrapper(self, other, self.variable)
+        raise TypeError("Cannot modulo a polynomial by this type")
+
+    def __rmod__(self, other):
+        if isinstance(other, int) or (isinstance(other, Rational) and other.denominator == 1):
+            return ModuloWrapper(other, self, self.variable)
+        if isinstance(other, Polynomial):
+            if self.variable != other.variable:
+                raise ValueError("Polynomials should have the same variable")
+            return ModuloWrapper(other, self, self.variable)
+        raise TypeError("Cannot modulo this type by a polynomial")
 
     def modify_var(self, new_var):
         self.variable = new_var
@@ -155,7 +173,7 @@ class Polynomial:
     def __float__(self):
         return float(self.coeffs[0])
 
-class PolynomialWrapper:
+class PolynomialWrapper(Polynomial):
     def __init__(self, dividend, divisor, variable):
         self.dividend = dividend
         self.divisor = divisor
@@ -168,8 +186,11 @@ class PolynomialWrapper:
         return self.__str__()
     
     def __call__(self, x):
-
-        return self.dividend(x) if isinstance(self.dividend, Polynomial) else self.dividend / self.divisor(x)
+        dividend = float(self.dividend(x)) if isinstance(self.dividend, Polynomial) else float(self.dividend)
+        divisor = self.divisor(x)
+        if divisor == 0:
+            return float('inf')
+        return dividend / divisor
     
     def __add__(self, other):
         if isinstance(other, int) or isinstance(other, Rational):
@@ -224,15 +245,108 @@ class PolynomialWrapper:
             raise TypeError("Operation too complex")
     
     def plot(self):
-        x = np.linspace(-15, 15, 100)
-        apply_func = np.vectorize(lambda x: self(x))
+        print(self.dividend, self.divisor)
+        x = np.linspace(-15, 15, 300)
+        apply_func = np.vectorize(lambda x: self(x) if self.divisor(x) != 0 else None)
         y = apply_func(x)
 
         plt.axhline(0, color='black')
         plt.axvline(0, color='black')  # Add vertical y-axis at x=0
         plt.xlabel('x')
-        plt.ylabel('f(x)')
+        plt.ylabel('y')
         plt.xlim(-15, 15)
-        plt.plot(x, y)
+
+        threshold = 1e-6  # Adjust the threshold as needed
+        valid_indices = np.abs(self.divisor(x)) > threshold
+        x_valid = x[valid_indices]
+        y_valid = y[valid_indices]
+
+        # Plot each continuous segment separately
+        discontinuity_indices = np.where(np.diff(valid_indices) != 0)[0] + 1
+        segments = np.split(x_valid, discontinuity_indices), np.split(y_valid, discontinuity_indices)
+
+        for x_segment, y_segment in zip(*segments):
+            plt.plot(x_segment, y_segment)
+
         plt.grid(True)
         plt.show()
+
+class ModuloWrapper(Polynomial):
+    def __init__(self, dividend, divisor, variable):
+        self.dividend = dividend
+        self.divisor = divisor
+        self.variable = variable
+        self.constant = 0
+        self.scalar = 1
+
+    def __str__(self):
+        return f"({self.dividend} % {self.divisor})" \
+                + (f" * {self.scalar}" if self.scalar != 1 else "") \
+                + (f" + {self.constant}" if self.constant != 0 else "")
+    
+    def __repr__(self):
+        return self.__str__()
+    
+    def __call__(self, x):
+        dividend = self.dividend(x) if isinstance(self.dividend, Polynomial) else self.dividend
+        divisor = self.divisor(x) if isinstance(self.divisor, Polynomial) else self.divisor
+        scalar = self.scalar(x) if isinstance(self.scalar, Polynomial) else self.scalar
+        constant = self.constant(x) if isinstance(self.constant, Polynomial) else self.constant
+        if isinstance(dividend, float) or isinstance(divisor, float):
+            return None
+        if divisor == 0:
+            return float('inf')
+        return (dividend % divisor) * scalar + constant
+
+    def __add__(self, other):
+        if isinstance(other, (int, float, Rational)):
+            self.constant += other
+            return self
+        elif isinstance(other, Polynomial):
+            if self.variable != other.variable:
+                raise ValueError("Polynomials should have the same variable")
+            self.constant += other
+            return self
+        else:
+            raise TypeError("Operation too complex")
+
+    def __radd__(self, other):
+        return other + self
+
+    def __mul__(self, other):
+        if isinstance(other, (int, float, Rational)):
+            self.constant *= other
+            self.scalar *= other
+            return self
+        elif isinstance(other, Polynomial):
+            if self.variable != other.variable:
+                raise ValueError("Polynomials should have the same variable")
+            self.constant *= other
+            self.scalar *= other
+            return self
+        else:
+            raise TypeError("Operation too complex")
+
+    def __rmul__(self, other):
+        return other * self
+    
+    def __truediv__(self, other):
+        if isinstance(other, (int, float, Rational)):
+            return ModuloWrapper(self.dividend, self.divisor * other, self.variable)
+        elif isinstance(other, Polynomial):
+            if self.variable != other.variable:
+                raise ValueError("Polynomials should have the same variable")
+            return PolynomialWrapper(self, other, self.variable)
+        else:
+            raise TypeError("Operation too complex")
+
+    def __rtruediv__(self, other):
+        if isinstance(other, (int, float, Rational)):
+            return ModuloWrapper(self.divisor * other, self.dividend, self.variable)
+        elif isinstance(other, Polynomial):
+            if self.variable != other.variable:
+                raise ValueError("Polynomials should have the same variable")
+            return PolynomialWrapper(other, self, self.variable)
+        else:
+            raise TypeError("Operation too complex")
+    
