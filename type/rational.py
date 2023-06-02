@@ -109,7 +109,10 @@ class Rational:
     def __mod__(self, other):
         if isinstance(other, int) or isinstance(other, float):
             return self.to_float() % other
-        return self.to_float() % other.to_float()
+        elif isinstance(other, Rational):
+            return self.to_float() % other.to_float()
+        else:
+            return other.__rmod__(self)
 
     def __rpow__(self, other):
         return other ** self.to_float()

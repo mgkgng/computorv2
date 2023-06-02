@@ -1,14 +1,12 @@
 from computor import computor
 from parser import Lexer, Parser, AST_TYPE
 from interpreter import Interpreter
-from utils import print_tokens
 import traceback
 import readline
 
 if __name__ == "__main__":
     lexer = Lexer()
     parser = Parser()
-    debug = False
     print("Please put your input here. Type 'HELP' to see the usage and 'EXIT' to exit.")
     while True:
         try:
@@ -44,20 +42,8 @@ if __name__ == "__main__":
                     print(f"Function {args[1]} is not defined")
                 continue
             readline.add_history(s)
-            if s == "DEBUG_ON":
-                debug = True
-                continue
-            elif s == "DEBUG_OFF":
-                debug = False
-                continue
             tokens = lexer.run(s)
-            if debug:
-                print_tokens(tokens)
-                print('parser begins')
             ast = parser.run(tokens)
-            if debug:
-                print(ast)
-                print('interpreter begins')
             interpreter = Interpreter(ast.root, ast.type)
             left, right = interpreter.run()
             if ast.type == AST_TYPE.ASSIGN:
@@ -76,7 +62,7 @@ if __name__ == "__main__":
             break
         except Exception as e:
             print("Error:", e)
-            traceback_info = traceback.format_exc()
-            print(traceback_info)
+            # traceback_info = traceback.format_exc()
+            # print(traceback_info)
 
 

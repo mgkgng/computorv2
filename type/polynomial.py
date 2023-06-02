@@ -21,7 +21,7 @@ class Polynomial:
         return Polynomial([-coef for coef in self.coeffs], self.variable)
 
     def __str__(self):
-        if len(self.coeffs) == 1 and self.coeffs[0] == 0:
+        if not len(self.coeffs) or all(c == 0 for c in self.coeffs):
             return "0"
 
         variable = self.variable if self.variable else "x"
@@ -146,6 +146,7 @@ class Polynomial:
 
     def __rmod__(self, other):
         if isinstance(other, int) or (isinstance(other, Rational) and other.denominator == 1):
+            print("coucou?")
             return ModuloWrapper(other, self, self.variable)
         if isinstance(other, Polynomial):
             if self.variable != other.variable:

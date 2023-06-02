@@ -42,10 +42,16 @@ class Matrix:
         return Matrix(result)
 
     def __mul__(self, other):
-        if not isinstance(other, Rational) and not isinstance(other, Complex):
-            raise TypeError("Only scalar multiplication is supported")
-        result = [[other * self.elements[i][j] for j in range(self.shape[1])] for i in range(self.shape[0])]
-        return Matrix(result)
+        if isinstance(other, Rational) or isinstance(other, Complex):
+            result = [[other * self.elements[i][j] for j in range(self.shape[1])] for i in range(self.shape[0])]
+            return Matrix(result)
+        elif isinstance(other, Matrix):
+            if self.shape[1] != other.shape[0]:
+                raise ValueError("The number of columns of the first matrix should be equal to the number of rows of the second matrix")
+            result = [[sum(self.elements[i][k] * other.elements[k][j] for k in range(self.shape[1])) for j in range(other.shape[1])] for i in range(self.shape[0])]
+            return Matrix(result)
+        raise TypeError("Only scalar multiplication and matrix multiplication is supported")
+
 
     def __truediv__(self, other):
         if not isinstance(other, Rational) and not isinstance(other, Complex):
