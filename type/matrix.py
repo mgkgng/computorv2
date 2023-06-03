@@ -1,5 +1,6 @@
 from .rational import Rational
 from .complex import Complex
+from .polynomial import Polynomial
 
 class Matrix:
     def __init__(self, elements):        
@@ -10,6 +11,15 @@ class Matrix:
         
         self.elements = elements
         self.shape = (len(elements), row_length)
+
+    def __call__(self, x):
+        new_elem = []
+        for row in self.elements:
+            new_row = []
+            for el in row:
+                new_row.append(el(x) if isinstance(el, Polynomial) else el)
+            new_elem.append(new_row)
+        return Matrix(new_elem)
 
     def __pos__(self):
         return self
@@ -42,16 +52,13 @@ class Matrix:
         return Matrix(result)
 
     def __mul__(self, other):
-        if isinstance(other, Rational) or isinstance(other, Complex):
+        if isinstance(other, (int, float, Rational, Complex, Polynomial)):
             result = [[other * self.elements[i][j] for j in range(self.shape[1])] for i in range(self.shape[0])]
             return Matrix(result)
-        elif isinstance(other, Matrix):
-            if self.shape[1] != other.shape[0]:
-                raise ValueError("The number of columns of the first matrix should be equal to the number of rows of the second matrix")
-            result = [[sum(self.elements[i][k] * other.elements[k][j] for k in range(self.shape[1])) for j in range(other.shape[1])] for i in range(self.shape[0])]
-            return Matrix(result)
-        raise TypeError("Only scalar multiplication and matrix multiplication is supported")
+        raise TypeError("Only scalar multiplication is supported with operator *")
 
+    def __rmul__(self, other):
+        return self * other
 
     def __truediv__(self, other):
         if not isinstance(other, Rational) and not isinstance(other, Complex):

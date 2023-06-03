@@ -23,7 +23,8 @@ if __name__ == "__main__":
         HELP: show help
         VARS: show variables
         FUNCS: show functions
-        PLOT <function name>: plot function''')
+        PLOT <function name>: plot function
+        DEL <variable/function name>: delete variable/function''')
                 continue
             if s == 'VARS':
                 computor.print_vars()
@@ -41,6 +42,19 @@ if __name__ == "__main__":
                 else:
                     print(f"Function {args[1]} is not defined")
                 continue
+            if s.startswith('DEL '):
+                args = s.split(' ')
+                if len(args) != 2 or not len(args[1]):
+                    print("Usage: DEL <variable/function name>")
+                    continue
+                if args[1] in computor.vars:
+                    del computor.vars[args[1]]
+                elif args[1] in computor.funcs:
+                    del computor.funcs[args[1]]
+                else:
+                    print(f"Variable or function {args[1]} is not defined")
+                continue
+        
             readline.add_history(s)
             tokens = lexer.run(s)
             ast = parser.run(tokens)
@@ -62,7 +76,7 @@ if __name__ == "__main__":
             break
         except Exception as e:
             print("Error:", e)
-            # traceback_info = traceback.format_exc()
-            # print(traceback_info)
+            traceback_info = traceback.format_exc()
+            print(traceback_info)
 
 

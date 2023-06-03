@@ -18,9 +18,9 @@ class Computor:
                 raise TypeError("Cannot assign a function to another function")
             if left.arg.coeffs != [0, 1]:
                 raise TypeError("Wrong format for function assignment")
-            if (isinstance(right, Polynomial) or isinstance(right, PolynomialWrapper)) and right.variable != left.arg.variable:
+            if isinstance(right, (Polynomial, PolynomialWrapper)) and right.variable != left.arg.variable:
                 raise TypeError("Cannot assign a polynomial to a function with a different variable")
-            if not (isinstance(right, Polynomial) or isinstance(right, PolynomialWrapper)):
+            if not (isinstance(right, (Polynomial, PolynomialWrapper, Matrix))):
                 right = Polynomial([right])
             self.funcs[left.name] = Function(left.name, left.arg, right)
             if left.name in self.vars:
@@ -35,7 +35,7 @@ class Computor:
                 return left
             return left(self.vars[left.variable])
 
-        elif isinstance(left, Function): # TODO chain of functions, variable in function ...
+        elif isinstance(left, Function):
             if left.name in self.funcs:
                 return self.funcs[left.name](left.arg)
             raise ValueError(f"Function {left.name} is not defined")
@@ -56,8 +56,8 @@ class Computor:
             raise TypeError("Cannot compare a polynomial with a different variable")
 
         new_poly = left - right
-        if new_poly.degree == 0:
-            self.solve_constant(new_poly.coeffs)
+        if not isinstance(new_poly, Polynomial) or new_poly.degree == 0:
+            self.solve_constant(new_poly.coeffs if isinstance(new_poly, Polynomial) else [new_poly])
         elif new_poly.degree == 1:
             self.solve_linear(new_poly.coeffs)
         elif new_poly.degree == 2:
@@ -112,7 +112,13 @@ class Computor:
     def print_funcs(self):
         for func in self.funcs.values():
             poly = func.polynomials
-            poly.variable = 'x'
+            if isinstance(poly, Polynomial):
+                poly.variable = 'x'
+            else: # Matrix
+                for i in range(len(poly.elements)):
+                    for j in range(len(poly.elements[i])):
+                        if isinstance(poly.elements[i][j], Polynomial):
+                            poly.elements[i][j].variable = 'x'
             print(f"{func.name}(x): {poly}")
 
 computor = Computor()

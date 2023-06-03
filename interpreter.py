@@ -88,6 +88,8 @@ class Interpreter:
                 raise ValueError("The left side of the equation must declare a variable when it is an assignment")
             if node.name == arg.variable:
                 raise ValueError("Function name and variable name cannot be the same")
+            if node.arg.name in computor.vars:
+                raise ValueError("The variable name is already used")
         return Function(node.name, arg)
 
     def visit_matrix(self, node, on_left=None):

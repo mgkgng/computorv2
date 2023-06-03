@@ -4,7 +4,7 @@ class Function:
         self.arg = arg
         self.polynomials = polynomials
 
-    def __call__(self, x):
+    def __call__(self, x):            
         return self.polynomials(x)
 
     def __str__(self):

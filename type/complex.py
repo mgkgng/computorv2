@@ -38,7 +38,9 @@ class Complex:
             imaginary = self.imaginary * other.real + self.real * other.imaginary
             return Complex(real, imaginary)
         elif isinstance(other, Rational):
-            return Complex(self.real * other.numerator / other.denominator, self.imaginary * other.numerator / other.denominator)
+            real = self.real * other.numerator / other.denominator
+            imaginary = self.imaginary * other.numerator / other.denominator
+            return Complex(real, imaginary) if imaginary != 0 else Rational(real, 1)
         elif isinstance(other, int) or isinstance(other, float):
             return Complex(self.real * other, self.imaginary * other)
         else:
@@ -72,13 +74,24 @@ class Complex:
             raise TypeError("Power must be an integer greater than or equal to 0")
 
     def __str__(self):
-        if self.imaginary >= 0:
+        if self.imaginary == 0:
+            return f"{int(self.real) if self.real.is_integer() else self.real}"
+        elif self.real == 0:
+            return f"{int(self.imaginary) if self.imaginary.is_integer() else self.imaginary}i"
+        elif self.imaginary >= 0:
             return f"{int(self.real) if self.real.is_integer() else self.real} + {int(self.imaginary) if self.imaginary.is_integer() else self.imaginary}i"
         else:
             return f"{int(self.real) if self.real.is_integer() else self.real} - {int(-self.imaginary) if self.imaginary.is_integer() else -self.imaginary}i"
 
     def __eq__(self, other):
-        return self.real == other.real and self.imaginary == other.imaginary
+        if isinstance(other, Complex):
+            return self.real == other.real and self.imaginary == other.imaginary
+        elif isinstance(other, (int, float)):
+            return self.real == other and self.imaginary == 0
+        elif isinstance(other, Rational):
+            return self.real == other.numerator / other.denominator and self.imaginary == 0
+        else:
+            return False
 
     def __pow__(self, power):
         if power < 0:
@@ -91,3 +104,5 @@ class Complex:
             while power > 1:
                 self = self * self
                 power -= 1
+            return self
+

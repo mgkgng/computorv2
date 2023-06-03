@@ -1,11 +1,12 @@
 from .function import Function
 from .rational import Rational
+from .complex import Complex
 import matplotlib.pyplot as plt
 import numpy as np
 from functools import reduce
 
 class Polynomial:
-    def __init__(self, coeffs, variable=None, divisor=None):
+    def __init__(self, coeffs, variable=None):
         if not coeffs or not isinstance(coeffs, list) or len(coeffs) == 0:
             raise ValueError("Polynomial coefficients should be a non-empty list")
         
@@ -31,7 +32,13 @@ class Polynomial:
             if coef == 0:
                 continue
             
-            term = str(coef) if i == 0 or ((isinstance(coef, int) or isinstance(coef, Rational)) and abs(coef) != 1) else "-" if (isinstance(coef, int) or isinstance(coef, Rational)) and coef < 0 else ""
+            if isinstance(coef, Complex):
+                term = f"({coef})"
+            elif isinstance(coef, (int, float, Rational)):
+                term = str(coef) if i == 0 or abs(coef) != 1 else "-" if coef < 0 else ""
+            else:
+                term = str(coef)
+            
             if i > 0:
                 term += variable
                 if i > 1:
@@ -75,7 +82,7 @@ class Polynomial:
         return (-self) + other
 
     def __mul__(self, other):
-        if isinstance(other, int) or isinstance(other, Rational):
+        if isinstance(other, (int, float, Rational, Complex)):
             return Polynomial([coef * other for coef in self.coeffs], self.variable)
         if isinstance(other, Polynomial):
             if self.variable != other.variable:
@@ -93,7 +100,7 @@ class Polynomial:
         elif isinstance(other, Function):
             raise TypeError("Cannot multiply a polynomial by a function")
         else:
-            return self * Polynomial([other])
+            return other.__rmul__(self)
 
     def __rmul__(self, other):
         return self * other
